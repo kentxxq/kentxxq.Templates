@@ -36,10 +36,7 @@ try
     // 启用quartz定时器
     builder.Services.AddQuartz(q =>
     {
-        q.SchedulerId = "k-schedulerId";
-        q.SchedulerName = "k-schedulerName";
         q.UseMicrosoftDependencyInjectionJobFactory();
-        q.UseDefaultThreadPool(5);
 
         q.ScheduleJob<HelloJob>(trigger =>
         {
