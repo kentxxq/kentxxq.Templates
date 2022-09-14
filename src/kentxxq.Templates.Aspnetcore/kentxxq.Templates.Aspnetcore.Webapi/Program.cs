@@ -1,5 +1,9 @@
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using Microsoft.OpenApi.Models;
+#if (EnableQuartz)
+using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
+using Quartz;
+#endif
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
@@ -27,6 +31,56 @@ try
 
     // 使用serilog
     builder.Host.UseSerilog();
+
+#if (EnableQuartz)
+    // 启用quartz定时器
+    builder.Services.AddQuartz(q =>
+    {
+        q.SchedulerId = "k-schedulerId";
+        q.SchedulerName = "k-schedulerName";
+        q.UseMicrosoftDependencyInjectionJobFactory();
+        q.UseDefaultThreadPool(5);
+
+        q.ScheduleJob<HelloJob>(trigger =>
+        {
+            trigger
+            .WithIdentity("hellojob", "group1")
+            .StartNow()
+            .WithSimpleSchedule(b =>
+            {
+                b.WithIntervalInSeconds(5)
+                .RepeatForever();
+            })
+            .WithDescription("hellojob task");
+        });
+
+        //var jobKey = new JobKey("awesome job", "awesome group");
+        //q.AddJob<HelloJob>(jobKey, j => j
+        //    .WithDescription("my awesome job")
+        //);
+
+        //q.AddTrigger(t => t
+        //    .WithIdentity("Simple Trigger")
+        //    .ForJob(jobKey)
+        //    .StartNow()
+        //    .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(10)).RepeatForever())
+        //    .WithDescription("my awesome simple trigger")
+        //);
+
+        //q.AddTrigger(t => t
+        //    .WithIdentity("Cron Trigger")
+        //    .ForJob(jobKey)
+        //    .StartAt(DateBuilder.EvenSecondDate(DateTimeOffset.UtcNow.AddSeconds(3)))
+        //    .WithCronSchedule("0/3 * * * * ?")
+        //    .WithDescription("my awesome cron trigger")
+        //);
+
+    });
+    builder.Services.AddQuartzServer(option =>
+    {
+        option.WaitForJobsToComplete = true;
+    });
+#endif
 
     // 自己的服务
     builder.Services.AddSingleton<IDemoService, DemoService>();

@@ -12,5 +12,33 @@
         "language": "C#",
         "type": "project"
     },
-    "preferNameDirectory": true
+    "preferNameDirectory": true,
+    "symbols": {
+        "EnableQuartz": {
+            "type": "parameter",
+            "datatype": "bool",
+            "defaultValue": "true",
+            "isRequired": true
+        }
+    },
+    "sources": [
+        {
+            "modifiers": [
+                {
+                    "condition": "(!EnableQuartz)",
+                    "exclude": [
+                        "kentxxq.Templates.Aspnetcore.Webapi/Jobs/**"
+                    ]
+                },
+                {
+                    "exclude": [
+                        ".vs/**",
+                        "nuget/**",
+                        "**/bin/**",
+                        "**/obj/**"
+                    ]
+                }
+            ]
+        }
+    ]
 }
