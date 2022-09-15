@@ -34,6 +34,7 @@ try
 
 #if (EnableQuartz)
     // 启用quartz定时器
+    builder.Services.Configure<QuartzOptions>(builder.Configuration.GetSection("Quartz"));
     builder.Services.AddQuartz(q =>
     {
         q.UseMicrosoftDependencyInjectionJobFactory();

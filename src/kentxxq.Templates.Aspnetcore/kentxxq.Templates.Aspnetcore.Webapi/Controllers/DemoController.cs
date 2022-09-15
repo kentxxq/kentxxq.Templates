@@ -1,4 +1,5 @@
-﻿using kentxxq.Templates.Aspnetcore.Webapi.Services;
+﻿using kentxxq.Templates.Aspnetcore.Webapi.Common;
+using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace kentxxq.Templates.Webapi.Controllers
@@ -27,9 +28,9 @@ namespace kentxxq.Templates.Webapi.Controllers
         /// </summary>
         /// <returns>demo数据</returns>
         [HttpGet]
-        public string GetData()
+        public ResultModel<string> GetData()
         {
-            return _demoService.GetData();
+            return ResultModel<string>.Ok(_demoService.GetData());
         }
     }
 }

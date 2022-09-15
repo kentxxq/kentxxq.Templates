@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿#if (EnableQuartz)
+using Quartz;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Jobs
 {
@@ -10,3 +11,4 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Jobs
         }
     }
 }
+#endif

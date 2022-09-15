@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Quartz.AspNetCore" Version="3.4.0" Condition=" '$(EnableQuartz)' == 'True' " />
+    <PackageReference Include="MySql.Data" Version="8.0.30" Condition=" '$(EnableQuartz)' != 'false' " />
+    <PackageReference Include="Quartz.AspNetCore" Version="3.4.0" Condition=" '$(EnableQuartz)' != 'false' " />
+    <PackageReference Include="Quartz.Serialization.Json" Version="3.4.0" Condition=" '$(EnableQuartz)' != 'false' " />
     <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
@@ -16,6 +18,12 @@
   <!-- swagger生成文件 -->
   <PropertyGroup>
     <DocumentationFile>bin\Debug\MyApi.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;EnableQuartz</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE</DefineConstants>
   </PropertyGroup>
 
 </Project>

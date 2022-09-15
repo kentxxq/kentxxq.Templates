@@ -27,7 +27,9 @@
                 {
                     "condition": "(!EnableQuartz)",
                     "exclude": [
-                        "kentxxq.Templates.Aspnetcore.Webapi/Jobs/**"
+                        "kentxxq.Templates.Aspnetcore.Webapi/Jobs/**",
+                        "kentxxq.Templates.Aspnetcore.Webapi/Controllers/JobController.cs",
+                        "kentxxq.Templates.Aspnetcore.Webapi/SO/Jobs/**"
                     ]
                 },
                 {
@@ -35,7 +37,8 @@
                         ".vs/**",
                         "nuget/**",
                         "**/bin/**",
-                        "**/obj/**"
+                        "**/obj/**",
+                        "kentxxq.Templates.Aspnetcore.Webapi/*.log"
                     ]
                 }
             ]
