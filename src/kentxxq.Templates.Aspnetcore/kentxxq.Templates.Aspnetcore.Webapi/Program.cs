@@ -46,10 +46,21 @@ try
                 .StartNow()
                 .WithSimpleSchedule(b =>
                 {
-                    b.WithIntervalInSeconds(5)
+                    b.WithIntervalInMinutes(5)
                         .RepeatForever();
                 })
                 .WithDescription("hellojob task");
+        });
+
+
+        q.ScheduleJob<DataJob>(trigger =>
+        {
+            trigger
+                .WithIdentity("datajob", "group2")
+                .UsingJobData("data", "datajob-data")
+                .StartNow()
+                .WithCronSchedule("5 * * * * ?")
+                .WithDescription("datajob task");
         });
 
         //var jobKey = new JobKey("awesome job", "awesome group");

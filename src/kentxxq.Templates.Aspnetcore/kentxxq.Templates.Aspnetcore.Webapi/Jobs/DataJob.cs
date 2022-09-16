@@ -4,17 +4,17 @@ using Quartz;
 namespace kentxxq.Templates.Aspnetcore.Webapi.Jobs
 {
     /// <summary>
-    /// 一个demo
+    /// 传递数据的job
     /// </summary>
-    public class HelloJob : IJob
+    public class DataJob : IJob
     {
-        private readonly ILogger<HelloJob> _logger;
+        private readonly ILogger<DataJob> _logger;
 
         /// <summary>
         /// 依赖注入
         /// </summary>
         /// <param name="logger"></param>
-        public HelloJob(ILogger<HelloJob> logger)
+        public DataJob(ILogger<DataJob> logger)
         {
             _logger = logger;
         }
@@ -24,9 +24,11 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Jobs
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation($"{DateTime.Now},Greetings from {nameof(HelloJob)}!");
+            var data = context.MergedJobDataMap.GetString("data");
+            _logger.LogInformation($"{data},output from {nameof(DataJob)}!");
             await Task.Yield();
         }
     }
