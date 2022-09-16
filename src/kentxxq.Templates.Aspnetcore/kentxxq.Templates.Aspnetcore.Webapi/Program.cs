@@ -1,12 +1,12 @@
 using System.Reflection;
+using kentxxq.Templates.Aspnetcore.Webapi.Common;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
-using Microsoft.AspNetCore.Diagnostics;
-using kentxxq.Templates.Aspnetcore.Webapi.Common;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
