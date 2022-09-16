@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
+using OpenTelemetry.Metrics;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -32,7 +33,33 @@ try
     // 使用serilog
     builder.Host.UseSerilog();
 
+    // opentelemetry
+    #region opentelemetry
+    builder.Services.AddOpenTelemetryMetrics(b =>
+    {
+        //b.AddPrometheusExporter(options =>
+        //{
+        //    //options.HttpListenerPrefixes = new[] { "https://localhost:443" };
+        //    //options.ScrapeEndpointPath = "/api/metrics";
+        //})
+        //    .AddAspNetCoreInstrumentation()
+        //    .AddRuntimeInstrumentation();
+
+        b.AddPrometheusExporter()
+            .AddAspNetCoreInstrumentation()
+            .AddRuntimeInstrumentation()
+           ;
+
+    });
+
+    //builder.Services.AddOpenTelemetryTracing(x =>
+    //{
+    //    x.AddQuartzInstrumentation();
+    //});
+    #endregion
+
 #if (EnableQuartz)
+    #region quartz
     // 启用quartz定时器
     builder.Services.Configure<QuartzOptions>(builder.Configuration.GetSection("Quartz"));
     builder.Services.AddQuartz(q =>
@@ -85,6 +112,7 @@ try
         //);
     });
     builder.Services.AddQuartzServer(option => { option.WaitForJobsToComplete = true; });
+    #endregion
 #endif
 
     // 自己的服务
@@ -137,6 +165,8 @@ try
         app.UseSwagger();
         app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/V1/swagger.json", "V1"); });
     }
+
+    app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
     app.UseExceptionHandler(builder =>
     {
