@@ -5,6 +5,8 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
+using Microsoft.AspNetCore.Diagnostics;
+using kentxxq.Templates.Aspnetcore.Webapi.Common;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -124,6 +126,22 @@ try
         app.UseSwagger();
         app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/V1/swagger.json", "V1"); });
     }
+
+    app.UseExceptionHandler(builder =>
+    {
+        builder.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status200OK;
+            context.Response.ContentType = "application/json";
+
+            var exception = context.Features.Get<IExceptionHandlerFeature>();
+            if (exception != null)
+            {
+                var result = ResultModel<string>.Error(exception.Error.StackTrace ?? "", exception.Error.Message);
+                await context.Response.WriteAsJsonAsync(result);
+            }
+        });
+    });
 
     app.MapControllers();
 
