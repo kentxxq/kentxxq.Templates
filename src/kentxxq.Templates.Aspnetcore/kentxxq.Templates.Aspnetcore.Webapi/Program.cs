@@ -1,25 +1,24 @@
-using System.Reflection;
 using kentxxq.Templates.Aspnetcore.Webapi.Common;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
-using OpenTelemetry.Metrics;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
 #endif
 
-var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
+var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .Enrich.FromLogContext()
     .WriteTo.Console(outputTemplate: logTemplate, theme: AnsiConsoleTheme.Code)
-    .WriteTo.File(path: $"{Assembly.GetEntryAssembly()?.GetName().Name}-.log", formatter: new JsonFormatter(),
+    .WriteTo.File(path: $"{ThisAssembly.Project.AssemblyName}-.log", formatter: new JsonFormatter(),
         rollingInterval: RollingInterval.Day, retainedFileCountLimit: 1)
     .CreateLogger();
 Log.Information("启动中...");
@@ -34,7 +33,9 @@ try
     builder.Host.UseSerilog();
 
     // opentelemetry
+
     #region opentelemetry
+
     builder.Services.AddOpenTelemetryMetrics(b =>
     {
         //b.AddPrometheusExporter(options =>
@@ -48,18 +49,20 @@ try
         b.AddPrometheusExporter()
             .AddAspNetCoreInstrumentation()
             .AddRuntimeInstrumentation()
-           ;
-
+            ;
     });
 
     //builder.Services.AddOpenTelemetryTracing(x =>
     //{
     //    x.AddQuartzInstrumentation();
     //});
+
     #endregion
 
 #if (EnableQuartz)
+
     #region quartz
+
     // 启用quartz定时器
     builder.Services.Configure<QuartzOptions>(builder.Configuration.GetSection("Quartz"));
     builder.Services.AddQuartz(q =>
@@ -112,7 +115,9 @@ try
         //);
     });
     builder.Services.AddQuartzServer(option => { option.WaitForJobsToComplete = true; });
+
     #endregion
+
 #endif
 
     // 自己的服务
