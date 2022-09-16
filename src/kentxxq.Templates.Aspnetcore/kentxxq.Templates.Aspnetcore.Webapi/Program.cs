@@ -1,14 +1,14 @@
+using System.Reflection;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using Microsoft.OpenApi.Models;
-#if (EnableQuartz)
-using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
-using Quartz;
-#endif
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
-using System.Reflection;
+#if (EnableQuartz)
+using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
+using Quartz;
+#endif
 
 var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
 
@@ -22,10 +22,8 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("启动中...");
 
 
-
 try
 {
-
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
 
@@ -42,14 +40,14 @@ try
         q.ScheduleJob<HelloJob>(trigger =>
         {
             trigger
-            .WithIdentity("hellojob", "group1")
-            .StartNow()
-            .WithSimpleSchedule(b =>
-            {
-                b.WithIntervalInSeconds(5)
-                .RepeatForever();
-            })
-            .WithDescription("hellojob task");
+                .WithIdentity("hellojob", "group1")
+                .StartNow()
+                .WithSimpleSchedule(b =>
+                {
+                    b.WithIntervalInSeconds(5)
+                        .RepeatForever();
+                })
+                .WithDescription("hellojob task");
         });
 
         //var jobKey = new JobKey("awesome job", "awesome group");
@@ -72,12 +70,8 @@ try
         //    .WithCronSchedule("0/3 * * * * ?")
         //    .WithDescription("my awesome cron trigger")
         //);
-
     });
-    builder.Services.AddQuartzServer(option =>
-    {
-        option.WaitForJobsToComplete = true;
-    });
+    builder.Services.AddQuartzServer(option => { option.WaitForJobsToComplete = true; });
 #endif
 
     // 自己的服务
@@ -104,9 +98,11 @@ try
             BearerFormat = "JWT",
             Description = "JWT Authorization header using the Bearer scheme."
         });
-        s.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        s.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
             {
-                new OpenApiSecurityScheme {
+                new OpenApiSecurityScheme
+                {
                     Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
                 },
                 Array.Empty<string>()
@@ -126,10 +122,7 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI(u =>
-        {
-            u.SwaggerEndpoint("/swagger/V1/swagger.json", "V1");
-        });
+        app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/V1/swagger.json", "V1"); });
     }
 
     app.MapControllers();
@@ -137,7 +130,6 @@ try
     app.Run();
 
     return 0;
-
 }
 catch (Exception exception)
 {

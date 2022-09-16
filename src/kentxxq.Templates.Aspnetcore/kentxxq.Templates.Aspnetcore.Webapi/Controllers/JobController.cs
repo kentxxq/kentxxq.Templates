@@ -27,21 +27,9 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers
         }
 
         /// <summary>
-        /// 获取所有的job
+        /// 获取scheduler状态
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<string> GetJobs()
-        {
-            var scheduler = await _schedulerFactory.GetScheduler();
-            var keys = await scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
-            if (keys != null)
-            {
-                return string.Join(",", keys);
-            }
-            return "没有job";
-        }
-
         [HttpGet]
         public async Task<ResultModel<SchedulerStatusSO>> GetStatus()
         {
@@ -67,7 +55,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers
                 ThreadPoolType = metaData.ThreadPoolType.ToString(),
                 ThreadPoolSize = metaData.ThreadPoolSize,
                 Version = metaData.Version,
-                RunningJobs = runningJobs.Select(key => key.ToString()??"").ToList(),
+                RunningJobs = runningJobs.Select(key => key.ToString() ?? "").ToList(),
                 Jobs = jobs.Select(key => key.ToString()).ToList(),
                 Triggers = triggers.Select(key => key.ToString()).ToList()
             };

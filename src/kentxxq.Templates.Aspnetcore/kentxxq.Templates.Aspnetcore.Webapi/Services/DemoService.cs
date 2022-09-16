@@ -1,9 +1,11 @@
-﻿namespace kentxxq.Templates.Aspnetcore.Webapi.Services
+﻿namespace kentxxq.Templates.Aspnetcore.Webapi.Services;
+
+/// <inheritdoc />
+public class DemoService : IDemoService
 {
-    /// <inheritdoc/>
-    public class DemoService : IDemoService
+    /// <inheritdoc />
+    public string GetData()
     {
-        /// <inheritdoc/>
-        public string GetData() => "demo";
+        return "demo";
     }
 }

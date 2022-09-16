@@ -11,4 +11,3 @@ public interface IDemoService
     /// <returns></returns>
     string GetData();
 }
-
