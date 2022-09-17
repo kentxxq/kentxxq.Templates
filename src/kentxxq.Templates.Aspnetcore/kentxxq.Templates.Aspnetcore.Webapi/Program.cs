@@ -62,6 +62,7 @@ try
         //    .AddRuntimeInstrumentation();
 
         b.AddPrometheusExporter()
+            .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddRuntimeInstrumentation()
             ;
