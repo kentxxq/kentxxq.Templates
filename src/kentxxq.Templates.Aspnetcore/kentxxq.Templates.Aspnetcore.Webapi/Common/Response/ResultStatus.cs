@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using NetEscapades.EnumGenerators;
 
-namespace kentxxq.Templates.Aspnetcore.Webapi.Common;
+namespace kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 
 /// <summary>
 /// 统一返回模型的枚举code

@@ -1,4 +1,5 @@
 ﻿using kentxxq.Templates.Aspnetcore.Webapi.Common;
+using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using Microsoft.AspNetCore.Mvc;
 

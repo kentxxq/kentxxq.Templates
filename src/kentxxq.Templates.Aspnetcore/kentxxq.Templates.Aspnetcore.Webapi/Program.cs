@@ -1,4 +1,5 @@
-using kentxxq.Templates.Aspnetcore.Webapi.Common;
+using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
+using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Models;
@@ -7,6 +8,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -29,8 +31,13 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
 
-    // 使用serilog
+    // serilog
     builder.Host.UseSerilog();
+
+    // 健康检查 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
+    builder.Services.AddHealthChecks()
+        .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s" })
+        .AddCheck<LiveHealthz>("live", tags: new[] { "k8s" });
 
     // opentelemetry
 
@@ -193,6 +200,11 @@ try
     }
 
     app.UseOpenTelemetryPrometheusScrapingEndpoint();
+
+    app.MapHealthChecks("/healthz", new HealthCheckOptions
+    {
+        AllowCachingResponses = false
+    });
 
     app.MapControllers();
 

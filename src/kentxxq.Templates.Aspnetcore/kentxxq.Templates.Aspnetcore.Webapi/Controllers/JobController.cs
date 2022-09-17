@@ -1,5 +1,6 @@
 ﻿#if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Common;
+using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.SO.Jobs;
 using Microsoft.AspNetCore.Mvc;
 using Quartz;
