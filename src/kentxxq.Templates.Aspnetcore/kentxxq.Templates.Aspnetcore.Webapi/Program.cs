@@ -164,18 +164,9 @@ try
 
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
+    app.UseExceptionHandler(b =>
     {
-        app.UseSwagger();
-        app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/V1/swagger.json", "V1"); });
-    }
-
-    app.UseOpenTelemetryPrometheusScrapingEndpoint();
-
-    app.UseExceptionHandler(builder =>
-    {
-        builder.Run(async context =>
+        b.Run(async context =>
         {
             context.Response.StatusCode = StatusCodes.Status200OK;
             context.Response.ContentType = "application/json";
@@ -188,6 +179,20 @@ try
             }
         });
     });
+
+    // 移除掉 /kentxxq.Templates.Aspnetcore 前缀
+    // 例如请求 kentxxq.com/kentxxq.Templates.Aspnetcore/api/Demo/GetData 就会变成 kentxxq.com/api/Demo/GetData
+    app.UsePathBase(new PathString("/kentxxq.Templates.Aspnetcore"));
+    app.UseRouting();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/V1/swagger.json", "V1"); });
+    }
+
+    app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
     app.MapControllers();
 
