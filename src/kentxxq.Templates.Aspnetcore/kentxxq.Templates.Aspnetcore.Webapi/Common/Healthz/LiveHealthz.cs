@@ -5,7 +5,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 /// <summary>
 /// 存活检查
 /// </summary>
-public class LiveHealthz:IHealthCheck
+public class LiveHealthz : IHealthCheck
 {
     /// <summary>
     /// 存活检查逻辑
@@ -17,5 +17,6 @@ public class LiveHealthz:IHealthCheck
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
     {
         return Task.FromResult(HealthCheckResult.Healthy("存活中..."));
+        //return Task.FromResult(HealthCheckResult.Unhealthy("挂了..."));
     }
 }

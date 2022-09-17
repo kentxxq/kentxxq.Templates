@@ -9,6 +9,7 @@ using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -38,6 +39,13 @@ try
     builder.Services.AddHealthChecks()
         .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s" })
         .AddCheck<LiveHealthz>("live", tags: new[] { "k8s" });
+    builder.Services.AddHealthChecksUI(setup =>
+    {
+        setup.SetEvaluationTimeInSeconds(5)
+        .DisableDatabaseMigrations()
+        .MaximumHistoryEntriesPerEndpoint(50);
+    })
+        .AddInMemoryStorage();
 
     // opentelemetry
 
@@ -201,12 +209,23 @@ try
 
     app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
-    app.MapHealthChecks("/healthz", new HealthCheckOptions
-    {
-        AllowCachingResponses = false
-    });
+    //app.MapHealthChecks("/healthz", new HealthCheckOptions
+    //{
+    //    AllowCachingResponses = false
+    //});
 
     app.MapControllers();
+
+    app.UseEndpoints(config =>
+    {
+        config.MapHealthChecks("/healthz", new HealthCheckOptions()
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+        // healthchecks-ui
+        config.MapHealthChecksUI();
+    });
 
     app.Run();
 
