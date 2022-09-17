@@ -179,6 +179,12 @@ try
 
     var app = builder.Build();
 
+    app.Use(async (context, next) =>
+    {
+        context.Response.Headers.Add("TraceId", context.TraceIdentifier);
+        await next();
+    });
+
     app.UseExceptionHandler(b =>
     {
         b.Run(async context =>
