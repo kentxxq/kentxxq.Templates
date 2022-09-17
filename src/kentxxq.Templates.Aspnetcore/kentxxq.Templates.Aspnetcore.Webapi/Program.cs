@@ -1,15 +1,15 @@
+using HealthChecks.UI.Client;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using HealthChecks.UI.Client;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -40,11 +40,11 @@ try
         .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s" })
         .AddCheck<LiveHealthz>("live", tags: new[] { "k8s" });
     builder.Services.AddHealthChecksUI(setup =>
-    {
-        setup.SetEvaluationTimeInSeconds(5)
-        .DisableDatabaseMigrations()
-        .MaximumHistoryEntriesPerEndpoint(50);
-    })
+        {
+            setup.SetEvaluationTimeInSeconds(5)
+                .DisableDatabaseMigrations()
+                .MaximumHistoryEntriesPerEndpoint(50);
+        })
         .AddInMemoryStorage();
 
     // opentelemetry
@@ -218,7 +218,7 @@ try
 
     app.UseEndpoints(config =>
     {
-        config.MapHealthChecks("/healthz", new HealthCheckOptions()
+        config.MapHealthChecks("/healthz", new HealthCheckOptions
         {
             Predicate = _ => true,
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse

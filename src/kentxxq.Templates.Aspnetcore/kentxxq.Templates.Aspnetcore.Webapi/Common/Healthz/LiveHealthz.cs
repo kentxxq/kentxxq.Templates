@@ -14,7 +14,8 @@ public class LiveHealthz : IHealthCheck
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
+        CancellationToken cancellationToken = new())
     {
         return Task.FromResult(HealthCheckResult.Healthy("存活中..."));
         //return Task.FromResult(HealthCheckResult.Unhealthy("挂了..."));
