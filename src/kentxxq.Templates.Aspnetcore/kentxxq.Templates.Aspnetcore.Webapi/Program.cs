@@ -19,6 +19,7 @@ var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Infrastructure", LogEventLevel.Warning)
     .Enrich.FromLogContext()
     .WriteTo.Console(outputTemplate: logTemplate, theme: AnsiConsoleTheme.Code)
     .WriteTo.File(path: $"{ThisAssembly.Project.AssemblyName}-.log", formatter: new JsonFormatter(),
