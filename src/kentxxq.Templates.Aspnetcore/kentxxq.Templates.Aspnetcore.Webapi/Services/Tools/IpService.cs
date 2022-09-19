@@ -1,4 +1,5 @@
 ﻿using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
+using WebApiClientCore;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Services.Tools
 {
@@ -18,7 +19,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.Tools
         /// <inheritdoc/>
         public async Task<IpServiceModel> GetIpInfo(string ip)
         {
-            var data = await _ipApi.GetIpInfoAsync(ip);
+            var data = await _ipApi.GetIpInfoAsync(ip).Retry(1);
             var result = new IpServiceModel { Status = data.Status, Country = data.Country, RegionName = data.RegionName, Isp = data.Isp, City = data.City };
             return result;
         }

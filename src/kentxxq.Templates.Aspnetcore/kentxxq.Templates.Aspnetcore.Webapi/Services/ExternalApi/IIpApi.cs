@@ -1,4 +1,5 @@
-﻿using WebApiClientCore.Attributes;
+﻿using WebApiClientCore;
+using WebApiClientCore.Attributes;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi
 {
@@ -15,6 +16,6 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi
         /// <returns></returns>
         [Cache(60 * 1000)] //缓存一分钟
         [HttpGet("json/{ip}?lang=zh-CN")]
-        Task<IpApiModels> GetIpInfoAsync(string ip);
+        ITask<IpApiModels> GetIpInfoAsync(string ip);
     }
 }

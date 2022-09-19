@@ -143,10 +143,11 @@ try
     builder.Services.AddSingleton<IDemoService, DemoService>();
     builder.Services.AddSingleton<IIpService, IpService>();
 
-    //webapi自动生成
+    #region webapi自动生成
     builder.Services.AddWebApiClient()
         .UseSourceGeneratorHttpApiActivator();
     builder.Services.AddHttpApi<IIpApi>();
+    #endregion
 
     #region swagger
 
