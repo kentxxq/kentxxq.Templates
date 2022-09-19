@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kentxxq.Templates.Aspnetcor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kentxxq.Templates.Aspnetcore.Webapi", "src\kentxxq.Templates.Aspnetcore\kentxxq.Templates.Aspnetcore.Webapi\kentxxq.Templates.Aspnetcore.Webapi.csproj", "{5C199042-75F9-4088-86AA-9E99D2CCFE4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Aspnetcore.DB", "src\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj", "{344039AC-2C6B-4359-9BAA-00FAB699CF98}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Aspnetcore.DB", "src\kentxxq.Templates.Aspnetcore\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj", "{344039AC-2C6B-4359-9BAA-00FAB699CF98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Aspnetcore.DBManager", "src\kentxxq.Templates.Aspnetcore.DBManager\kentxxq.Templates.Aspnetcore.DBManager.csproj", "{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Aspnetcore.DBManager", "src\kentxxq.Templates.Aspnetcore\kentxxq.Templates.Aspnetcore.DBManager\kentxxq.Templates.Aspnetcore.DBManager.csproj", "{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

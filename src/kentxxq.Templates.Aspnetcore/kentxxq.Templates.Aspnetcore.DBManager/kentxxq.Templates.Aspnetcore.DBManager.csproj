@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\kentxxq.Templates.Aspnetcore\kentxxq.Templates.Aspnetcore.Webapi\kentxxq.Templates.Aspnetcore.Webapi.csproj" />
+      <ProjectReference Include="..\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj" />
     </ItemGroup>
 
 </Project>
