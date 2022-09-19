@@ -13,6 +13,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi
         /// </summary>
         /// <param name="ip"></param>
         /// <returns></returns>
+        [Cache(60 * 1000)] //缓存一分钟
         [HttpGet("json/{ip}?lang=zh-CN")]
         Task<IpApiModels> GetIpInfoAsync(string ip);
     }
