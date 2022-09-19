@@ -1,5 +1,4 @@
 using HealthChecks.UI.Client;
-using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using Microsoft.AspNetCore.Diagnostics;
@@ -12,6 +11,7 @@ using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
+using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -28,6 +28,10 @@ Log.Logger = new LoggerConfiguration()
         rollingInterval: RollingInterval.Day, retainedFileCountLimit: 1)
     .CreateLogger();
 Log.Information("启动中...");
+Log.Information(@"请求地址: http://127.0.0.1:5000/ 或 http://127.0.0.1:5000/kentxxq.Templates.Aspnetcore/ ");
+Log.Information(@"swagger请求地址: http://127.0.0.1:5000/swagger/index.html");
+Log.Information(@"健康检查地址: http://127.0.0.1:5000/healthz");
+Log.Information(@"健康检查UI地址: http://127.0.0.1:5000/healthchecks-ui");
 
 
 try
@@ -39,17 +43,17 @@ try
     builder.Host.UseSerilog();
 
     #region 健康检查 
+    builder.Services.AddHealthChecksUI(setup =>
+    {
+        setup.SetEvaluationTimeInSeconds(5)
+            .DisableDatabaseMigrations()
+            .MaximumHistoryEntriesPerEndpoint(50);
+    })
+        .AddInMemoryStorage();
     // 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
     builder.Services.AddHealthChecks()
         .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s" })
         .AddCheck<LiveHealthz>("live", tags: new[] { "k8s" });
-    builder.Services.AddHealthChecksUI(setup =>
-        {
-            setup.SetEvaluationTimeInSeconds(5)
-                .DisableDatabaseMigrations()
-                .MaximumHistoryEntriesPerEndpoint(50);
-        })
-        .AddInMemoryStorage();
     #endregion
 
     #region opentelemetry
@@ -236,7 +240,6 @@ try
             Predicate = _ => true,
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
-        // healthchecks-ui
         config.MapHealthChecksUI();
     });
 
