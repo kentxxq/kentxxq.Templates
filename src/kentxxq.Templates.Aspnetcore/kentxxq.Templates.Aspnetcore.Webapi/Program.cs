@@ -38,7 +38,8 @@ try
     // serilog
     builder.Host.UseSerilog();
 
-    // 健康检查 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
+    #region 健康检查 
+    // 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
     builder.Services.AddHealthChecks()
         .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s" })
         .AddCheck<LiveHealthz>("live", tags: new[] { "k8s" });
@@ -49,8 +50,7 @@ try
                 .MaximumHistoryEntriesPerEndpoint(50);
         })
         .AddInMemoryStorage();
-
-    // opentelemetry
+    #endregion
 
     #region opentelemetry
 
@@ -142,6 +142,8 @@ try
     // 自己的服务
     builder.Services.AddSingleton<IDemoService, DemoService>();
     builder.Services.AddSingleton<IIpService, IpService>();
+
+    //webapi自动生成
     builder.Services.AddWebApiClient()
         .UseSourceGeneratorHttpApiActivator();
     builder.Services.AddHttpApi<IIpApi>();
@@ -185,8 +187,10 @@ try
 
     #endregion
 
+    // 构建app对象后，开始配置管道
     var app = builder.Build();
 
+    // 管道最外层配置traceId
     app.Use(async (context, next) =>
     {
         context.Response.Headers.Add("TraceId", context.TraceIdentifier);
@@ -214,7 +218,6 @@ try
     app.UsePathBase(new PathString("/kentxxq.Templates.Aspnetcore"));
     app.UseRouting();
 
-    // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
@@ -222,11 +225,6 @@ try
     }
 
     app.UseOpenTelemetryPrometheusScrapingEndpoint();
-
-    //app.MapHealthChecks("/healthz", new HealthCheckOptions
-    //{
-    //    AllowCachingResponses = false
-    //});
 
     app.MapControllers();
 
