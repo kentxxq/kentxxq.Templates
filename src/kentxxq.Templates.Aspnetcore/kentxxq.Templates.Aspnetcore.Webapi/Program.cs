@@ -158,7 +158,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(s =>
     {
-        s.SwaggerDoc("V1", new OpenApiInfo { Title = "V1" });
+        s.SwaggerDoc("Examples", new OpenApiInfo { Title = "Examples" });
 
         // JWT
         s.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
@@ -226,7 +226,7 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/V1/swagger.json", "V1"); });
+        app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/Examples/swagger.json", "Examples"); });
     }
 
     app.UseOpenTelemetryPrometheusScrapingEndpoint();

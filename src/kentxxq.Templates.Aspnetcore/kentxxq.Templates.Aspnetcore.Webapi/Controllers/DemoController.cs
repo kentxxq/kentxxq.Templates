@@ -10,7 +10,7 @@ namespace kentxxq.Templates.Webapi.Controllers;
 /// <summary>
 /// demo的api
 /// </summary>
-[ApiExplorerSettings(GroupName = "V1")]
+[ApiExplorerSettings(GroupName = "Examples")]
 [Route("api/[controller]/[action]")]
 [ApiController]
 public class DemoController : ControllerBase

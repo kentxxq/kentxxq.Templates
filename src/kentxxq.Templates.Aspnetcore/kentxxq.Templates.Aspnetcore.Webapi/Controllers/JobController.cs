@@ -10,7 +10,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers
     /// <summary>
     /// 调度api
     /// </summary>
-    [ApiExplorerSettings(GroupName = "V1")]
+    [ApiExplorerSettings(GroupName = "Examples")]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class JobController : ControllerBase
