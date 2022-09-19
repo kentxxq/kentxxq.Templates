@@ -1,6 +1,8 @@
-﻿using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
+﻿using kentxxq.Templates.Aspnetcore.Webapi.Common;
+using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
+using kentxxq.Templates.Aspnetcore.Webapi.SO.Tools;
 using Microsoft.AspNetCore.Mvc;
 
 namespace kentxxq.Templates.Webapi.Controllers;
@@ -43,9 +45,10 @@ public class DemoController : ControllerBase
     /// </summary>
     /// <returns>demo数据</returns>
     [HttpGet]
-    public async Task<ResultModel<IpServiceModel>> GetIpInfo(string ip)
+    public async Task<ResultModel<IpSO>> GetIpInfo(string ip)
     {
         var data = await _ipService.GetIpInfo(ip);
-        return ResultModel<IpServiceModel>.Ok(data);
+        var result = Mapper.IpServiceModelToIpSO(data);
+        return ResultModel<IpSO>.Ok(result);
     }
 }

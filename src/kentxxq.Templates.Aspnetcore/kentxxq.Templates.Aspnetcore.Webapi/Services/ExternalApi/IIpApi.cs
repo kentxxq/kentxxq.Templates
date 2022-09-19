@@ -16,6 +16,6 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi
         /// <returns></returns>
         [Cache(60 * 1000)] //缓存一分钟
         [HttpGet("json/{ip}?lang=zh-CN")]
-        ITask<IpApiModels> GetIpInfoAsync(string ip);
+        ITask<IpApiModel> GetIpInfoAsync(string ip);
     }
 }

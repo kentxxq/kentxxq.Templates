@@ -5,7 +5,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi
     /// <summary>
     /// ip-api的返回模型
     /// </summary>
-    public class IpApiModels
+    public class IpApiModel
     {
         /// <summary>
         /// 查询的ip
