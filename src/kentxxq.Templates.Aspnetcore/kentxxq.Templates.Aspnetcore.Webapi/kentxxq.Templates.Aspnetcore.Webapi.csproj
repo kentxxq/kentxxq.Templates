@@ -29,6 +29,10 @@
         <PackageReference Include="WebApiClientCore.Extensions.SourceGenerator" Version="2.0.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj" />
+    </ItemGroup>
+
     <!-- swagger生成文件 -->
     <PropertyGroup>
         <DocumentationFile>bin\Debug\MyApi.xml</DocumentationFile>

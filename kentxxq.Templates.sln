@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kentxxq.Templates.Aspnetcor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kentxxq.Templates.Aspnetcore.Webapi", "src\kentxxq.Templates.Aspnetcore\kentxxq.Templates.Aspnetcore.Webapi\kentxxq.Templates.Aspnetcore.Webapi.csproj", "{5C199042-75F9-4088-86AA-9E99D2CCFE4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Aspnetcore.DB", "src\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj", "{344039AC-2C6B-4359-9BAA-00FAB699CF98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Aspnetcore.DBManager", "src\kentxxq.Templates.Aspnetcore.DBManager\kentxxq.Templates.Aspnetcore.DBManager.csproj", "{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,12 +21,22 @@ Global
 		{5C199042-75F9-4088-86AA-9E99D2CCFE4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C199042-75F9-4088-86AA-9E99D2CCFE4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C199042-75F9-4088-86AA-9E99D2CCFE4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{344039AC-2C6B-4359-9BAA-00FAB699CF98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{344039AC-2C6B-4359-9BAA-00FAB699CF98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{344039AC-2C6B-4359-9BAA-00FAB699CF98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{344039AC-2C6B-4359-9BAA-00FAB699CF98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5C199042-75F9-4088-86AA-9E99D2CCFE4F} = {98F15998-A1F8-484B-95BD-1D2B7D01CD0E}
+		{344039AC-2C6B-4359-9BAA-00FAB699CF98} = {98F15998-A1F8-484B-95BD-1D2B7D01CD0E}
+		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05} = {98F15998-A1F8-484B-95BD-1D2B7D01CD0E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E5508FA-0271-4B86-B536-48B532D51034}
