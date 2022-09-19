@@ -18,4 +18,6 @@
 1. 启动的时候输出关键的路由信息，例如swagger入口，metrics等
 2. net7发布的时候，加上`JWT`！参考https://stackoverflow.com/questions/38751616/asp-net-core-identity-get-current-user,还有https://learn.microsoft.com/en-us/dotnet/api/system.security.claims.claimtypes?view=net-6.0
 3. 生成一个数据库？
-4. 自动生成api接口。https://github.com/dotnetcore/WebApiClient或者https://github.com/reactiveui/refit
+4. 自动生成api接口/token?https://github.com/dotnetcore/WebApiClient或者https://github.com/reactiveui/refit
+5. grpc?https://devblogs.microsoft.com/dotnet/asp-net-core-updates-in-dotnet-7-rc-1/#experimental-openapi-support-for-grpc-json-transcoding
+6. 限速api?https://devblogs.microsoft.com/dotnet/asp-net-core-updates-in-dotnet-7-rc-1/#experimental-openapi-support-for-grpc-json-transcoding

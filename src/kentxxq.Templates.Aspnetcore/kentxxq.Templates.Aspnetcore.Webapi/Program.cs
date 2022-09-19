@@ -10,6 +10,8 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
+using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
+using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -139,6 +141,10 @@ try
 
     // 自己的服务
     builder.Services.AddSingleton<IDemoService, DemoService>();
+    builder.Services.AddSingleton<IIpService, IpService>();
+    builder.Services.AddWebApiClient()
+        .UseSourceGeneratorHttpApiActivator();
+    builder.Services.AddHttpApi<IIpApi>();
 
     #region swagger
 
