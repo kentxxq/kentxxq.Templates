@@ -1,10 +1,16 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using SqlSugar;
+
+
+IConfiguration config = new ConfigurationBuilder()
+    .AddUserSecrets(typeof(Program).Assembly)
+    .Build();
+
 
 var db = new SqlSugarClient(new ConnectionConfig
 {
-    ConnectionString =
-        "Server=yourhost;Port=3306;Database=k_webapi;Username=username;Password=password;MinimumPoolSize=5;maximumpoolsize=50;",
+    ConnectionString = config["Database:Connectionstring"],
     DbType = DbType.MySql,
     IsAutoCloseConnection = true
 });

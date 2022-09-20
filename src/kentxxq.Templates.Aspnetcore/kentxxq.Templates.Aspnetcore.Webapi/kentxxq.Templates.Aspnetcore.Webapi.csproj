@@ -36,6 +36,7 @@
     <!-- swagger生成文件 -->
     <PropertyGroup>
         <DocumentationFile>bin\Debug\MyApi.xml</DocumentationFile>
+        <UserSecretsId>41b77f98-1dc5-41d8-91a7-0d2abc306289</UserSecretsId>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DefineConstants>$(DefineConstants)TRACE;EnableQuartz</DefineConstants>
