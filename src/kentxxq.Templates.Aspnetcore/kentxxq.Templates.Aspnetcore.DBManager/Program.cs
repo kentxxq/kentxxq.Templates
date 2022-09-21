@@ -1,5 +1,6 @@
-﻿using System.Reflection;
+﻿using kentxxq.Templates.Aspnetcore.DBManager;
 using Microsoft.Extensions.Configuration;
+using Spectre.Console;
 using SqlSugar;
 
 
@@ -15,15 +16,26 @@ var db = new SqlSugarClient(new ConnectionConfig
     IsAutoCloseConnection = true
 });
 
+var init = new Init(db);
 
-db.DbMaintenance.CreateDatabase();
 
-#pragma warning disable CS8602 // 解引用可能出现空引用。
-var types = Assembly
-    .LoadFrom("kentxxq.Templates.Aspnetcore.DB.dll") //如果 .dll报错，可以换成 xxx.exe 有些生成的是exe 
-    .GetTypes()
-    .Where(it => it.FullName.StartsWith("kentxxq.Templates.Aspnetcore")) //命名空间过滤，当然你也可以写其他条件过滤
-    .ToArray(); //断点调试一下是不是需要的Type，不是需要的在进行过滤
-#pragma warning restore CS8602 // 解引用可能出现空引用。
+var fruit = AnsiConsole.Prompt(
+    new SelectionPrompt<string>()
+        .Title("[red]请小心[/]选择对数据库的操作?")
+        .AddChoices(new[] {
+            "首次初始化", "重新初始化"
+        }));
 
-db.CodeFirst.SetStringDefaultLength(200).InitTables(types); //根据types创建表
+switch (fruit)
+{
+    case "首次初始化":
+        init.FristTimeCreate();
+        break;
+    case "重新初始化":
+        init.ReCreate();
+        break;
+    default:
+        AnsiConsole.MarkupLine("无此选项");
+        break;
+}
+

@@ -13,6 +13,6 @@ public class User
     [SugarColumn]
     public string Password { get; set; } = null!;
 
-    [SugarColumn]
+    [SugarColumn(IsNullable = true)]
     public DateTime? LastLoginTime { get; set; }
 }
