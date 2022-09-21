@@ -7,8 +7,6 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 /// </summary>
 public class StartupHealthz : IHealthCheck
 {
-    private bool _isCheck = false;
-
     /// <summary>
     /// 健康检查逻辑
     /// </summary>

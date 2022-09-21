@@ -50,9 +50,19 @@ namespace kentxxq.Templates.Aspnetcore.DBManager
 
         private void InitTableData()
         {
-            AnsiConsole.MarkupLine("[green]初始化表数据-User[/]");
+            int count;
+            AnsiConsole.Markup($"初始化表数据-{nameof(User)} ");
             var initUser = new User { Username = "ken", Password = "ken", LastLoginTime = DateTime.Now };
-            var a = _client.Insertable(initUser).ExecuteCommand();
+            count = _client.Insertable(initUser).ExecuteCommand();
+            AnsiConsole.MarkupLine($"[green]{count}[/]条");
+
+            AnsiConsole.Markup($"初始化表数据-{nameof(Address)}");
+            var initAddresses = new List<Address> {
+                new Address(){UserAddress = "qcd1", Uid = 1,Name="ken",Phone="123"},
+                new Address(){UserAddress = "qcd2", Uid = 1,Name="ken",Phone="123"},
+            };
+            count = _client.Insertable(initAddresses).ExecuteCommand();
+            AnsiConsole.MarkupLine($"[green]{count}[/]条");
         }
 
     }

@@ -12,16 +12,14 @@ public static class SqlsugarSetup
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
-    /// <param name="dbName"></param>
-    public static void AddSqlsugarSetup(this IServiceCollection services, IConfiguration configuration,
-        string dbName = "kentxxq.Templates.Aspnetcore")
+    public static void AddSqlsugarSetup(this IServiceCollection services, IConfiguration configuration)
     {
         var sqlSugar = new SqlSugarScope(new ConnectionConfig
-            {
-                DbType = DbType.MySql,
-                ConnectionString = configuration.GetConnectionString(dbName),
-                IsAutoCloseConnection = true
-            },
+        {
+            DbType = DbType.MySql,
+            ConnectionString = configuration.GetConnectionString(configuration["Database:ConnectionString"]),
+            IsAutoCloseConnection = true
+        },
             db =>
             {
                 //单例参数配置，所有上下文生效
