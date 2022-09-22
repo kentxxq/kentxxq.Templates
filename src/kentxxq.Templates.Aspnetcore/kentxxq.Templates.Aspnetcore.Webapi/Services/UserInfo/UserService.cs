@@ -31,12 +31,8 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
         {
             var result = await _sqlSugarClient.Queryable<User>()
                 .Where(u => u.Username == username && u.Password == password)
-                .CountAsync();
-            if (result == 0)
-            {
-                return false;
-            }
-            return true;
+                .AnyAsync();
+            return result;
         }
     }
 }

@@ -2,8 +2,8 @@
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
-using kentxxq.Templates.Aspnetcore.Webapi.SO.Jobs;
-using kentxxq.Templates.Aspnetcore.Webapi.SO.Tools;
+using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
+using kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
 using Microsoft.AspNetCore.Mvc;
 using Quartz;
 using Quartz.Impl.Matchers;
@@ -21,18 +21,15 @@ public class DemoController : ControllerBase
     private readonly IDemoService _demoService;
     private readonly IIpService _ipService;
     private readonly ISchedulerFactory _schedulerFactory;
+    private readonly IUserService _userService;
 
-    /// <summary>
-    /// 依赖注入
-    /// </summary>
-    /// <param name="demoService"></param>
-    /// <param name="ipService"></param>
-    /// <param name="schedulerFactory"></param>
-    public DemoController(IDemoService demoService, IIpService ipService, ISchedulerFactory schedulerFactory)
+    /// <inheritdoc/>
+    public DemoController(IDemoService demoService, IIpService ipService, ISchedulerFactory schedulerFactory, IUserService userService)
     {
         _demoService = demoService;
         _ipService = ipService;
         _schedulerFactory = schedulerFactory;
+        _userService = userService;
     }
 
     /// <summary>
@@ -92,5 +89,31 @@ public class DemoController : ControllerBase
             Triggers = triggers.Select(key => key.ToString()).ToList()
         };
         return ResultModel<SchedulerStatusSO>.Ok(data);
+    }
+
+    /// <summary>
+    /// 用户登录
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="password"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<ResultModel<bool>> Login(string username, string password)
+    {
+        var result = await _userService.Login(username, password);
+        return ResultModel<bool>.Ok(result);
+    }
+
+    /// <summary>
+    /// 通过用户名查询用户地址信息
+    /// </summary>
+    /// <param name="username">用户名</param>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<ResultModel<IEnumerable<AddressSO>>> GetUserAddressByUsername(string username)
+    {
+        var data = await _userService.GetUserAddressByUsername(username);
+        var result = data.Select(a => Mapper.AddressToAddressSO(a));
+        return ResultModel<IEnumerable<AddressSO>>.Ok(result);
     }
 }

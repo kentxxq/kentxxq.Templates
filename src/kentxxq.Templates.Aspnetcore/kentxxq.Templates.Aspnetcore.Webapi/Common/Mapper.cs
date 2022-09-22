@@ -1,6 +1,7 @@
-﻿using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
+﻿using kentxxq.Templates.Aspnetcore.DB;
+using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
-using kentxxq.Templates.Aspnetcore.Webapi.SO.Tools;
+using kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
 using Riok.Mapperly.Abstractions;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Common
@@ -24,5 +25,12 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common
         /// <param name="ipServiceModel"></param>
         /// <returns></returns>
         public static partial IpSO IpServiceModelToIpSO(IpServiceModel ipServiceModel);
+
+        /// <summary>
+        /// 数据库address转换返回
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public static partial AddressSO AddressToAddressSO(Address address);
     }
 }

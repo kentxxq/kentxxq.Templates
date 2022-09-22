@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace kentxxq.Templates.Aspnetcore.Webapi.SO.Tools
+namespace kentxxq.Templates.Aspnetcore.Webapi.SO.Demo
 {
     /// <summary>
     /// ip返回数据

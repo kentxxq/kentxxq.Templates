@@ -13,6 +13,7 @@ using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
+using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -38,6 +39,7 @@ Log.Information(@"健康检查UI地址: http://127.0.0.1:5000/healthchecks-ui");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+    builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
     builder.Services.AddControllers();
 
     // serilog
@@ -150,6 +152,7 @@ try
     // 自己的服务
     builder.Services.AddSingleton<IDemoService, DemoService>();
     builder.Services.AddSingleton<IIpService, IpService>();
+    builder.Services.AddTransient<IUserService, UserService>();
 
     #region webapi自动生成
     builder.Services.AddWebApiClient()
