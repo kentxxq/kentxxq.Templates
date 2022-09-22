@@ -17,8 +17,14 @@
         "EnableQuartz": {
             "type": "parameter",
             "datatype": "bool",
-            "defaultValue": "true",
-            "isRequired": true
+            "defaultValue": "false",
+            "isRequired": false
+        },
+        "EnableDB": {
+            "type": "parameter",
+            "datatype": "bool",
+            "defaultValue": "false",
+            "isRequired": false
         }
     },
     "sources": [
@@ -33,12 +39,19 @@
                     ]
                 },
                 {
+                    "condition": "(!EnableDB)",
+                    "exclude": [
+                        "kentxxq.Templates.Aspnetcore.DB/**",
+                        "kentxxq.Templates.Aspnetcore.DBManager/**"
+                    ]
+                },
+                {
                     "exclude": [
                         ".vs/**",
                         "nuget/**",
                         "**/bin/**",
                         "**/obj/**",
-                        "kentxxq.Templates.Aspnetcore.Webapi/*.log"
+                        "**/*.log"
                     ]
                 }
             ]

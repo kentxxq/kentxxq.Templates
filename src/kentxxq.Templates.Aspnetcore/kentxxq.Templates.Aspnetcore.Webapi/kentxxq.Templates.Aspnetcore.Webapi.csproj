@@ -30,7 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj" />
+      <ProjectReference Include="..\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj" Condition=" '$(EnableDB)' != 'false' " />
     </ItemGroup>
 
     <!-- swagger生成文件 -->
@@ -39,7 +39,7 @@
         <UserSecretsId>41b77f98-1dc5-41d8-91a7-0d2abc306289</UserSecretsId>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DefineConstants>$(DefineConstants)TRACE;EnableQuartz</DefineConstants>
+        <DefineConstants>$(DefineConstants)TRACE;EnableQuartz;EnableDB</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <DefineConstants>$(DefineConstants)TRACE</DefineConstants>

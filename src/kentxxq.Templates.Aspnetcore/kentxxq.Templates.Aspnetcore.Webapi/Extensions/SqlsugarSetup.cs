@@ -1,4 +1,5 @@
-﻿using SqlSugar;
+﻿#if (EnableDB)
+using SqlSugar;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 
@@ -31,3 +32,4 @@ public static class SqlsugarSetup
         services.AddSingleton<ISqlSugarClient>(sqlSugar); //这边是SqlSugarScope用AddSingleton
     }
 }
+#endif

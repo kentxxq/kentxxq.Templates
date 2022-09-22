@@ -1,4 +1,5 @@
-﻿using kentxxq.Templates.Aspnetcore.DB;
+﻿#if (EnableDB)
+using kentxxq.Templates.Aspnetcore.DB;
 using SqlSugar;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
@@ -36,3 +37,4 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
         }
     }
 }
+#endif

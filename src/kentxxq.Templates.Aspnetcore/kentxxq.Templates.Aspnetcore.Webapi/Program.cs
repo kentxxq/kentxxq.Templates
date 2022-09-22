@@ -12,8 +12,10 @@ using Serilog.Sinks.SystemConsole.Themes;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
-using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
+#if (EnableDB)
+using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
+#endif
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
@@ -45,8 +47,10 @@ try
     // serilog
     builder.Host.UseSerilog();
 
+#if (EnableDB)
     // 数据库
     builder.Services.AddSqlsugarSetup(builder.Configuration);
+#endif
 
     #region 健康检查 
     builder.Services.AddHealthChecksUI(setup =>

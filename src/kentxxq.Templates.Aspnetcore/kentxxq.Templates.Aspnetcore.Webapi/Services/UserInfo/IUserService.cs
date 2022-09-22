@@ -1,4 +1,5 @@
-﻿using kentxxq.Templates.Aspnetcore.DB;
+﻿#if (EnableDB)
+using kentxxq.Templates.Aspnetcore.DB;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
 {
@@ -23,3 +24,4 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
         Task<List<Address>> GetUserAddressByUsername(string username);
     }
 }
+#endif
