@@ -2,11 +2,15 @@
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
+#if (EnableDB)
 using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
+#endif
 using kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
 using Microsoft.AspNetCore.Mvc;
+#if (EnableQuartz)
 using Quartz;
 using Quartz.Impl.Matchers;
+#endif
 
 namespace kentxxq.Templates.Webapi.Controllers;
 
@@ -20,16 +24,33 @@ public class DemoController : ControllerBase
 {
     private readonly IDemoService _demoService;
     private readonly IIpService _ipService;
+#if (EnableQuartz)
     private readonly ISchedulerFactory _schedulerFactory;
+#endif
+#if (EnableDB)
     private readonly IUserService _userService;
+#endif
 
     /// <inheritdoc/>
-    public DemoController(IDemoService demoService, IIpService ipService, ISchedulerFactory schedulerFactory, IUserService userService)
+    public DemoController(
+        IDemoService demoService
+        , IIpService ipService
+#if (EnableQuartz)
+        , ISchedulerFactory schedulerFactory
+#endif
+#if (EnableDB)
+        , IUserService userService
+#endif
+        )
     {
         _demoService = demoService;
         _ipService = ipService;
+#if (EnableQuartz)
         _schedulerFactory = schedulerFactory;
+#endif
+#if (EnableDB)
         _userService = userService;
+#endif
     }
 
     /// <summary>
@@ -55,6 +76,7 @@ public class DemoController : ControllerBase
         return ResultModel<IpSO>.Ok(result);
     }
 
+#if (EnableQuartz)
     /// <summary>
     /// 获取scheduler状态
     /// </summary>
@@ -90,7 +112,9 @@ public class DemoController : ControllerBase
         };
         return ResultModel<SchedulerStatusSO>.Ok(data);
     }
+#endif
 
+#if (EnableDB)
     /// <summary>
     /// 用户登录
     /// </summary>
@@ -116,4 +140,5 @@ public class DemoController : ControllerBase
         var result = data.Select(a => Mapper.AddressToAddressSO(a));
         return ResultModel<IEnumerable<AddressSO>>.Ok(result);
     }
+#endif
 }

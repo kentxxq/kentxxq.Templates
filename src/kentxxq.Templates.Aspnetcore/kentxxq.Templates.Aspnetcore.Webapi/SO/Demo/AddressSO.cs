@@ -1,4 +1,5 @@
-﻿namespace kentxxq.Templates.Aspnetcore.Webapi.SO.Demo
+﻿#if (EnableDB)
+namespace kentxxq.Templates.Aspnetcore.Webapi.SO.Demo
 {
     /// <summary>
     /// 用户地址信息
@@ -22,3 +23,4 @@
 
     }
 }
+#endif

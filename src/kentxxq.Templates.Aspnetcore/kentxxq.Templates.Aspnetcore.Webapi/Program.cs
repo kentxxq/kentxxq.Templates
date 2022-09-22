@@ -12,9 +12,9 @@ using Serilog.Sinks.SystemConsole.Themes;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
-using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 #if (EnableDB)
 using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
+using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 #endif
 #if (EnableQuartz)
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
@@ -156,7 +156,9 @@ try
     // 自己的服务
     builder.Services.AddSingleton<IDemoService, DemoService>();
     builder.Services.AddSingleton<IIpService, IpService>();
+#if (EnableDB)
     builder.Services.AddTransient<IUserService, UserService>();
+#endif
 
     #region webapi自动生成
     builder.Services.AddWebApiClient()

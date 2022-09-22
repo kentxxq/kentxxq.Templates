@@ -1,4 +1,6 @@
-﻿using kentxxq.Templates.Aspnetcore.DB;
+﻿#if (EnableDB)
+using kentxxq.Templates.Aspnetcore.DB;
+#endif
 using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 using kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
@@ -25,12 +27,13 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common
         /// <param name="ipServiceModel"></param>
         /// <returns></returns>
         public static partial IpSO IpServiceModelToIpSO(IpServiceModel ipServiceModel);
-
+#if (EnableDB)
         /// <summary>
         /// 数据库address转换返回
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
         public static partial AddressSO AddressToAddressSO(Address address);
+#endif
     }
 }

@@ -35,7 +35,7 @@
                     "exclude": [
                         "kentxxq.Templates.Aspnetcore.Webapi/Jobs/**",
                         "kentxxq.Templates.Aspnetcore.Webapi/Controllers/JobController.cs",
-                        "kentxxq.Templates.Aspnetcore.Webapi/SO/Jobs/**"
+                        "kentxxq.Templates.Aspnetcore.Webapi/SO/Demo/SchedulerStatusSO"
                     ]
                 },
                 {
