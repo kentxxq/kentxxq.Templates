@@ -62,6 +62,9 @@ try
         .AddInMemoryStorage();
     // 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
     builder.Services.AddHealthChecks()
+#if (EnableDB)
+        .AddMySql(builder.Configuration["Database:ConnectionString"], "k_webapi", tags: new[] { "db" })
+#endif
         .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s" })
         .AddCheck<LiveHealthz>("live", tags: new[] { "k8s" });
     #endregion
