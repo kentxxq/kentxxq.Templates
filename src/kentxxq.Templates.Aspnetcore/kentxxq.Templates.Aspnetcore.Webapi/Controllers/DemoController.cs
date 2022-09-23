@@ -12,7 +12,7 @@ using Quartz;
 using Quartz.Impl.Matchers;
 #endif
 
-namespace kentxxq.Templates.Webapi.Controllers;
+namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers;
 
 /// <summary>
 /// demo的api
