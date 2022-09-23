@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using SqlSugar;
 
-
 IConfiguration config = new ConfigurationBuilder()
     .AddUserSecrets(typeof(Program).Assembly)
     .Build();
@@ -22,14 +21,12 @@ var init = new Init(db);
 var fruit = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
         .Title("[red]请小心[/]选择对数据库的操作?")
-        .AddChoices(new[] {
-            "首次初始化", "重新初始化"
-        }));
+        .AddChoices("首次初始化", "重新初始化"));
 
 switch (fruit)
 {
     case "首次初始化":
-        init.FristTimeCreate();
+        init.FirstTimeCreate();
         break;
     case "重新初始化":
         init.ReCreate();
@@ -38,4 +35,3 @@ switch (fruit)
         AnsiConsole.MarkupLine("无此选项");
         break;
 }
-

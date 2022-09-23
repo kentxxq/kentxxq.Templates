@@ -27,10 +27,7 @@ public class StartupHealthz : IHealthCheck
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
         CancellationToken cancellationToken = new())
     {
-        if (StartupCompleted)
-        {
-            return Task.FromResult(HealthCheckResult.Healthy("启动完成"));
-        }
+        if (StartupCompleted) return Task.FromResult(HealthCheckResult.Healthy("启动完成"));
         return Task.FromResult(HealthCheckResult.Unhealthy("还未启动完成"));
     }
 }

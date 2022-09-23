@@ -16,11 +16,11 @@ public static class SqlsugarSetup
     public static void AddSqlsugarSetup(this IServiceCollection services, IConfiguration configuration)
     {
         var sqlSugar = new SqlSugarScope(new ConnectionConfig
-        {
-            DbType = DbType.MySql,
-            ConnectionString = configuration["Database:ConnectionString"],
-            IsAutoCloseConnection = true
-        },
+            {
+                DbType = DbType.MySql,
+                ConnectionString = configuration["Database:ConnectionString"],
+                IsAutoCloseConnection = true
+            },
             db =>
             {
                 //单例参数配置，所有上下文生效

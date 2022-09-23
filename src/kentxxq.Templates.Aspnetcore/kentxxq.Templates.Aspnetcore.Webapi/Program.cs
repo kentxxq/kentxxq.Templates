@@ -1,6 +1,9 @@
 using HealthChecks.UI.Client;
+using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
+using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
+using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
@@ -9,9 +12,6 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
-using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
-using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
-using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 #if (EnableDB)
 using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
@@ -53,13 +53,14 @@ try
     builder.Services.AddSqlsugarSetup(builder.Configuration);
 #endif
 
-    #region 健康检查 
+    #region 健康检查
+
     builder.Services.AddHealthChecksUI(setup =>
-    {
-        setup.SetEvaluationTimeInSeconds(5)
-            .DisableDatabaseMigrations()
-            .MaximumHistoryEntriesPerEndpoint(50);
-    })
+        {
+            setup.SetEvaluationTimeInSeconds(5)
+                .DisableDatabaseMigrations()
+                .MaximumHistoryEntriesPerEndpoint(50);
+        })
         .AddInMemoryStorage();
     // 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
     builder.Services.AddHealthChecks()
@@ -71,6 +72,7 @@ try
 
     builder.Services.AddSingleton<StartupHealthz>();
     builder.Services.AddHostedService<StartupBackgroundService>();
+
     #endregion
 
     #region opentelemetry
@@ -168,9 +170,11 @@ try
 #endif
 
     #region webapi自动生成
+
     builder.Services.AddWebApiClient()
         .UseSourceGeneratorHttpApiActivator();
     builder.Services.AddHttpApi<IIpApi>();
+
     #endregion
 
     #region swagger

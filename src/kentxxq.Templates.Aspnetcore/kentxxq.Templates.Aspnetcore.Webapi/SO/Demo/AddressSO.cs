@@ -20,7 +20,6 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.SO.Demo
         /// 手机号
         /// </summary>
         public string Phone { get; set; } = null!;
-
     }
 }
 #endif

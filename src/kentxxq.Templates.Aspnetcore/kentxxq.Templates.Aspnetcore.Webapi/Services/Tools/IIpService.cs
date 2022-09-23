@@ -1,15 +1,14 @@
-﻿namespace kentxxq.Templates.Aspnetcore.Webapi.Services.Tools
+﻿namespace kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
+
+/// <summary>
+/// ip服务接口
+/// </summary>
+public interface IIpService
 {
     /// <summary>
-    /// ip服务接口
+    /// 获取ip信息
     /// </summary>
-    public interface IIpService
-    {
-        /// <summary>
-        /// 获取ip信息
-        /// </summary>
-        /// <param name="ip"></param>
-        /// <returns></returns>
-        Task<IpServiceModel> GetIpInfo(string ip);
-    }
+    /// <param name="ip"></param>
+    /// <returns></returns>
+    Task<IpServiceModel> GetIpInfo(string ip);
 }

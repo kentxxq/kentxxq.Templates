@@ -2,11 +2,11 @@
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
+using kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
+using Microsoft.AspNetCore.Mvc;
 #if (EnableDB)
 using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 #endif
-using kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
-using Microsoft.AspNetCore.Mvc;
 #if (EnableQuartz)
 using Quartz;
 using Quartz.Impl.Matchers;
@@ -31,7 +31,7 @@ public class DemoController : ControllerBase
     private readonly IUserService _userService;
 #endif
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DemoController(
         IDemoService demoService
         , IIpService ipService
@@ -41,7 +41,7 @@ public class DemoController : ControllerBase
 #if (EnableDB)
         , IUserService userService
 #endif
-        )
+    )
     {
         _demoService = demoService;
         _ipService = ipService;

@@ -4,7 +4,7 @@ using SqlSugar;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public class UserService : IUserService
     {
         private readonly ISqlSugarClient _sqlSugarClient;
@@ -17,7 +17,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
             _sqlSugarClient = sqlSugarClient;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<List<Address>> GetUserAddressByUsername(string username)
         {
             var data = await _sqlSugarClient.Queryable<User>()
@@ -27,7 +27,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
             return data;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<bool> Login(string username, string password)
         {
             var result = await _sqlSugarClient.Queryable<User>()
