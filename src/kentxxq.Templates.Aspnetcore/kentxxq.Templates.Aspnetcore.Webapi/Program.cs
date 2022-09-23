@@ -34,7 +34,8 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("启动中...");
 Log.Information(@"请求地址: http://127.0.0.1:5000/ 或 http://127.0.0.1:5000/kentxxq.Templates.Aspnetcore/ ");
 Log.Information(@"swagger请求地址: http://127.0.0.1:5000/swagger/index.html");
-Log.Information(@"健康检查地址: http://127.0.0.1:5000/healthz");
+Log.Information(@"就绪检查地址: http://127.0.0.1:5000/healthz/startup");
+Log.Information(@"存活检查地址: http://127.0.0.1:5000/healthz");
 Log.Information(@"健康检查UI地址: http://127.0.0.1:5000/healthchecks-ui");
 
 
@@ -65,8 +66,11 @@ try
 #if (EnableDB)
         .AddMySql(builder.Configuration["Database:ConnectionString"], "k_webapi", tags: new[] { "db" })
 #endif
-        .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s" })
-        .AddCheck<LiveHealthz>("live", tags: new[] { "k8s" });
+        .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s", "startup" })
+        .AddCheck<LiveHealthz>("live", tags: new[] { "k8s", "live" });
+
+    builder.Services.AddSingleton<StartupHealthz>();
+    builder.Services.AddHostedService<StartupBackgroundService>();
     #endregion
 
     #region opentelemetry
@@ -208,6 +212,8 @@ try
 
     #endregion
 
+    //var serviceList = builder.Services.ToList(); 所有注入的service列表
+
     // 构建app对象后，开始配置管道
     var app = builder.Build();
 
@@ -255,6 +261,10 @@ try
         {
             Predicate = _ => true,
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+        config.MapHealthChecks("/healthz/startup", new HealthCheckOptions
+        {
+            Predicate = healthCheck => healthCheck.Tags.Contains("startup")
         });
         config.MapHealthChecksUI();
     });

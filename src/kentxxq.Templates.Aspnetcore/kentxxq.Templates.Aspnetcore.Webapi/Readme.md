@@ -22,4 +22,4 @@
 - net7发布的时候，grpc?https://devblogs.microsoft.com/dotnet/asp-net-core-updates-in-dotnet-7-rc-1/#experimental-openapi-support-for-grpc-json-transcoding
 - net7发布的时候，限速api?https://devblogs.microsoft.com/dotnet/announcing-rate-limiting-for-dotnet/
 - source-generator做策略模式？！
-- startup健康检查？
+- ~~startup健康检查？~~
