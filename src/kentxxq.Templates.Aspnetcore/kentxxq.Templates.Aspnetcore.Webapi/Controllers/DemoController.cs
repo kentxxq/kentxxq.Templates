@@ -11,6 +11,11 @@ using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 using Quartz;
 using Quartz.Impl.Matchers;
 #endif
+#if (EnableNacos)
+using Nacos.AspNetCore.V2;
+using Nacos.V2;
+using Microsoft.Extensions.Options;
+#endif
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers;
 
@@ -30,6 +35,14 @@ public class DemoController : ControllerBase
 #if (EnableDB)
     private readonly IUserService _userService;
 #endif
+#if (EnableNacos)
+    private readonly NacosSettings _appSettings;
+    private readonly NacosSettings _mAppSettings;
+    private readonly NacosAspNetOptions _nacosAspNetOptions;
+    private readonly INacosNamingService _nacosNamingService;
+    private readonly NacosSettings _sAppSettings;
+#endif
+
 
     /// <inheritdoc />
     public DemoController(
@@ -41,6 +54,13 @@ public class DemoController : ControllerBase
 #if (EnableDB)
         , IUserService userService
 #endif
+#if (EnableNacos)
+        , INacosNamingService nacosNamingService
+        , IOptions<NacosAspNetOptions> nacosAspNetOptions
+        , IOptions<NacosSettings> appSetting
+        , IOptionsSnapshot<NacosSettings> sAppSettings
+        , IOptionsMonitor<NacosSettings> mAppSettings
+#endif
     )
     {
         _demoService = demoService;
@@ -50,6 +70,13 @@ public class DemoController : ControllerBase
 #endif
 #if (EnableDB)
         _userService = userService;
+#endif
+#if (EnableNacos)
+        _appSettings = appSetting.Value;
+        _sAppSettings = sAppSettings.Value;
+        _mAppSettings = mAppSettings.CurrentValue;
+        _nacosAspNetOptions = nacosAspNetOptions.Value;
+        _nacosNamingService = nacosNamingService;
 #endif
     }
 
@@ -139,6 +166,43 @@ public class DemoController : ControllerBase
         var data = await _userService.GetUserAddressByUsername(username);
         var result = data.Select(a => Mapper.AddressToAddressSO(a));
         return ResultModel<IEnumerable<AddressSO>>.Ok(result);
+    }
+#endif
+
+
+#if (EnableNacos)
+    /// <summary>
+    /// 获取注册上去的主机连接信息
+    /// </summary>
+    /// <returns>ip:port</returns>
+    [HttpGet]
+    public ResultModel<string> GetHost()
+    {
+        var instance = _nacosNamingService.SelectOneHealthyInstance("kentxxq.Templates.Aspnetcore", "dev_demo_group").GetAwaiter()
+            .GetResult();
+        var host = $"{instance.Ip}:{instance.Port}";
+        return ResultModel<string>.Ok(host);
+    }
+
+    /// <summary>
+    /// 获取自己的配置信息
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public ResultModel<List<NacosSettings>> GetAppSettings()
+    {
+        var data = new List<NacosSettings> { _appSettings, _sAppSettings, _mAppSettings };
+        return ResultModel<List<NacosSettings>>.Ok(data);
+    }
+
+    /// <summary>
+    /// 获取注册上去的实例信息
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public ResultModel<NacosAspNetOptions> GetNacosAspNetOptions()
+    {
+        return ResultModel<NacosAspNetOptions>.Ok(_nacosAspNetOptions);
     }
 #endif
 }

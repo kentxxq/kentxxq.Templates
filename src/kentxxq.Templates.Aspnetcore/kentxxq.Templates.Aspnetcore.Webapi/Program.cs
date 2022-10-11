@@ -23,6 +23,10 @@ using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 using kentxxq.Templates.Aspnetcore.Webapi.Jobs;
 using Quartz;
 #endif
+#if (EnableNacos)
+using Nacos.AspNetCore.V2;
+using kentxxq.Templates.Aspnetcore.Webapi.Common;
+#endif
 
 var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
 
@@ -46,6 +50,20 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
+
+#if (EnableNacos)
+    // nacos 服务注册与发现
+    builder.Services.AddNacosAspNet(builder.Configuration, "NacosConfig");
+    // nacos 配置中心
+    builder.Host.ConfigureAppConfiguration((_, configBuilder) =>
+    {
+        var c = configBuilder.Build();
+        configBuilder.AddNacosV2Configuration(c.GetSection("NacosConfig"));
+    });
+    // nacos 读取对应配置到对象
+    builder.Services.Configure<NacosSettings>(builder.Configuration.GetSection("NacosSettings"));
+#endif
+
     builder.Services.AddControllers();
 
     if (builder.Environment.IsDevelopment())

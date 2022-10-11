@@ -24,5 +24,5 @@
 - source-generator做策略模式？！
 - ~~startup健康检查？~~
 - net7发布的时候，通过eventSource计算启动时间，同时更新startup健康检查。参考https://github.com/dotnet/aspnetcore/blob/v7.0.0-preview.5.22303.8/src/Hosting/Hosting/src/Internal/HostingEventSource.cs#L75-L79，https://github.com/dotnet/aspnetcore/blob/v7.0.0-preview.5.22303.8/src/Hosting/Hosting/src/Internal/HostingEventSource.cs#L75-L79，https://learn.microsoft.com/zh-cn/dotnet/core/diagnostics/eventsource-collect-and-view-traces#eventlistener，https://learn.microsoft.com/zh-cn/dotnet/core/diagnostics/diagnostics-client-library#parse-events-in-real-time
-- nacos?
+- ~~nacos完成~~
 - ~~websocket使用signalR替代~~

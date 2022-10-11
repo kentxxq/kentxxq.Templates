@@ -31,6 +31,12 @@
             "datatype": "bool",
             "defaultValue": "false",
             "isRequired": false
+        },
+        "EnableNacos": {
+            "type": "parameter",
+            "datatype": "bool",
+            "defaultValue": "false",
+            "isRequired": false
         }
     },
     "sources": [
@@ -55,6 +61,12 @@
                     "condition": "(!EnableSignalR)",
                     "exclude": [
                         "kentxxq.Templates.Aspnetcore.Webapi/Hubs/**"
+                    ]
+                },
+                {
+                    "condition": "(!EnableNacos)",
+                    "exclude": [
+                        "kentxxq.Templates.Aspnetcore.Webapi/Common/NacosSettings.cs"
                     ]
                 },
                 {
