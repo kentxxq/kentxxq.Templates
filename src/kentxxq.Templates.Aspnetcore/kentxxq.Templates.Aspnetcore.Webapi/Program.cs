@@ -1,6 +1,9 @@
 using HealthChecks.UI.Client;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
+#if (EnableSignalR)
+using kentxxq.Templates.Aspnetcore.Webapi.Hubs;
+#endif
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
@@ -44,6 +47,28 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
     builder.Services.AddControllers();
+
+    if (builder.Environment.IsDevelopment())
+    {
+        // 跨域配置
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "all",
+                policy =>
+                {
+                    policy
+                        .SetIsOriginAllowed((host) => true)
+                        .AllowCredentials()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
+    }
+
+#if (EnableSignalR)
+    //signalR
+    builder.Services.AddSignalR();
+#endif
 
     // serilog
     builder.Host.UseSerilog();
@@ -251,6 +276,11 @@ try
 
     if (app.Environment.IsDevelopment())
     {
+        app.UseCors("all");
+    }
+
+    if (app.Environment.IsDevelopment())
+    {
         app.UseSwagger();
         app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/Examples/swagger.json", "Examples"); });
     }
@@ -258,6 +288,9 @@ try
     app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
     app.MapControllers();
+#if (EnableSignalR)
+    app.MapHub<ChatHub>("/chatHub");
+#endif
 
     app.UseEndpoints(config =>
     {

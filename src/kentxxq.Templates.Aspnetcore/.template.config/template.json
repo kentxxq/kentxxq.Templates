@@ -25,6 +25,12 @@
             "datatype": "bool",
             "defaultValue": "false",
             "isRequired": false
+        },
+        "EnableSignalR": {
+            "type": "parameter",
+            "datatype": "bool",
+            "defaultValue": "false",
+            "isRequired": false
         }
     },
     "sources": [
@@ -43,6 +49,12 @@
                     "exclude": [
                         "kentxxq.Templates.Aspnetcore.DB/**",
                         "kentxxq.Templates.Aspnetcore.DBManager/**"
+                    ]
+                },
+                {
+                    "condition": "(!EnableSignalR)",
+                    "exclude": [
+                        "kentxxq.Templates.Aspnetcore.Webapi/Hubs/**"
                     ]
                 },
                 {
