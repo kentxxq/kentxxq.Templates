@@ -1,5 +1,5 @@
-﻿using kentxxq.Templates.Blazor.Native.Data;
-using Microsoft.AspNetCore.Components.WebView.Maui;
+﻿using kentxxq.Templates.Blazor.Native.Services;
+using kentxxq.Templates.Blazor.UI.Interfaces;
 
 namespace kentxxq.Templates.Blazor.Native
 {
@@ -17,10 +17,10 @@ namespace kentxxq.Templates.Blazor.Native
 
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
-
-            builder.Services.AddSingleton<WeatherForecastService>();
+            // 自己的服务配置
+            builder.Services.AddSingleton<ITextService, TextService>();
 
             return builder.Build();
         }

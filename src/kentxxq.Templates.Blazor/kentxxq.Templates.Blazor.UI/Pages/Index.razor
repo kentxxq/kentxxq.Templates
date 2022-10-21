@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using kentxxq.Templates.Blazor.UI.Interfaces
+@inject ITextService _textService;
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +9,5 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@_textService.GetText()
