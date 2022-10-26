@@ -87,7 +87,7 @@ try
     //signalR
     builder.Services.AddSignalR();
 #endif
-
+    builder.Services.AddResponseCaching();
     // serilog
     builder.Host.UseSerilog();
 
@@ -304,7 +304,7 @@ try
     }
 
     app.UseOpenTelemetryPrometheusScrapingEndpoint();
-
+    app.UseResponseCaching();
     app.MapControllers();
 #if (EnableSignalR)
     app.MapHub<ChatHub>("/chatHub");

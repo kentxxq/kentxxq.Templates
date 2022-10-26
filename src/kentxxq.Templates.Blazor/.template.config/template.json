@@ -1,0 +1,16 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "kentxxq",
+    "classifications": [
+        "Blazor"
+    ],
+    "identity": "kentxxq.Templates.Blazor",
+    "name": "kentxxq.Templates.Blazor",
+    "shortName": "k-blazor",
+    "sourceName": "kentxxq.Templates.Blazor",
+    "tags": {
+        "language": "C#",
+        "type": "project"
+    },
+    "preferNameDirectory": true
+}
