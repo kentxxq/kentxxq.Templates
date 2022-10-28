@@ -220,4 +220,15 @@ public class DemoController : ControllerBase
         await Task.Delay(2000);
         return "1";
     }
+
+    /// <summary>
+    /// 测试服务器端缓存
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<string> TestServerCache()
+    {
+        var data = await _demoService.GetCacheData();
+        return data.ToString();
+    }
 }

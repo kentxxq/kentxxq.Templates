@@ -8,4 +8,11 @@ public class DemoService : IDemoService
     {
         return "demo";
     }
+
+    /// <inheritdoc />
+    public async Task<DateTime> GetCacheData()
+    {
+        await Task.Delay(2);
+        return DateTime.Now;
+    }
 }

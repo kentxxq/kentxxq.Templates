@@ -37,6 +37,12 @@
             "datatype": "bool",
             "defaultValue": "false",
             "isRequired": false
+        },
+        "EnableRedis": {
+            "type": "parameter",
+            "datatype": "bool",
+            "defaultValue": "false",
+            "isRequired": false
         }
     },
     "sources": [

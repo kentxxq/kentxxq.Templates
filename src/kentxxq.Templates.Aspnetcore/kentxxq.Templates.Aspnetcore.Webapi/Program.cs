@@ -27,6 +27,11 @@ using Quartz;
 using Nacos.AspNetCore.V2;
 using kentxxq.Templates.Aspnetcore.Webapi.Common;
 #endif
+using EasyCaching.Interceptor.AspectCore;
+using AspectCore.Extensions.DependencyInjection;
+#if (EnableRedis)
+using EasyCaching.Serialization.SystemTextJson.Configurations;
+#endif
 
 var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
 
@@ -50,6 +55,22 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
+    builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
+#if (EnableRedis)
+    var cacheProviderName = "redis1";
+#else
+    var cacheProviderName = "memory1";
+#endif
+    builder.Services.AddEasyCaching(option =>
+    {
+#if (EnableRedis)
+        option.UseRedis(builder.Configuration, cacheProviderName)
+              .WithSystemTextJson(cacheProviderName);
+#else
+        option.UseInMemory(builder.Configuration, cacheProviderName);
+#endif
+    });
+    builder.Services.ConfigureAspectCoreInterceptor(option => option.CacheProviderName = cacheProviderName);
 
 #if (EnableNacos)
     // nacos 服务注册与发现
@@ -206,7 +227,7 @@ try
 #endif
 
     // 自己的服务
-    builder.Services.AddSingleton<IDemoService, DemoService>();
+    builder.Services.AddTransient<IDemoService, DemoService>();
     builder.Services.AddSingleton<IIpService, IpService>();
 #if (EnableDB)
     builder.Services.AddTransient<IUserService, UserService>();
