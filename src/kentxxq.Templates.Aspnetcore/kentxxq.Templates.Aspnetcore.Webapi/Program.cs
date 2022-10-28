@@ -31,6 +31,8 @@ using EasyCaching.Interceptor.AspectCore;
 using AspectCore.Extensions.DependencyInjection;
 #if (EnableRedis)
 using EasyCaching.Serialization.SystemTextJson.Configurations;
+#else
+using EasyCaching.InMemory;
 #endif
 
 var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
