@@ -30,6 +30,7 @@
         <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta04" PrivateAssets="all" ExcludeAssets="runtime" />
         <PackageReference Include="Riok.Mapperly" Version="2.5.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
+        <PackageReference Include="Serilog.Expressions" Version="3.4.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="ThisAssembly" Version="1.0.10" />
         <PackageReference Include="WebApiClientCore" Version="2.0.3" />
