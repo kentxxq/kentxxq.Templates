@@ -4,8 +4,9 @@
 public class DemoService : IDemoService
 {
     /// <inheritdoc />
-    public string GetData()
+    public async Task<string> GetData()
     {
+        await Task.Delay(1000);
         return "demo";
     }
 

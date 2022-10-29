@@ -85,9 +85,9 @@ public class DemoController : ControllerBase
     /// </summary>
     /// <returns>demo数据</returns>
     [HttpGet]
-    public ResultModel<string> GetData()
+    public async Task<ResultModel<string>> GetData()
     {
-        return ResultModel<string>.Ok(_demoService.GetData());
+        return ResultModel<string>.Ok(await _demoService.GetData());
     }
 
 

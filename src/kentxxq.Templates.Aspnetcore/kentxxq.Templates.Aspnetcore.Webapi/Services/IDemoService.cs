@@ -1,4 +1,5 @@
 ﻿using EasyCaching.Core.Interceptor;
+using kentxxq.Templates.Aspnetcore.Webapi.Common.AOP;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Services;
 
@@ -11,7 +12,8 @@ public interface IDemoService
     /// 获取demo数据
     /// </summary>
     /// <returns></returns>
-    string GetData();
+    [CostInterceptor]
+    Task<string> GetData();
 
     /// <summary>
     /// 获取本地缓存数据
