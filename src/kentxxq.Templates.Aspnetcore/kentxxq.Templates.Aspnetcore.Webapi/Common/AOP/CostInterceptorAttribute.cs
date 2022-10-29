@@ -18,7 +18,6 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common.AOP
             try
             {
                 _beginTime = DateTime.Now;
-                _logger.LogInformation(_beginTime.ToString("yyyy-MM-dd HH:mm:ss.") + "开始计时");
                 await next(context);
             }
             catch (Exception)
@@ -29,7 +28,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common.AOP
             finally
             {
                 TimeSpan cost = DateTime.Now - _beginTime;
-                _logger.LogInformation(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.") + $"结束计时，耗时{cost.TotalMilliseconds}ms");
+                _logger.LogInformation($"计算{context.Implementation}.{context.ProxyMethod.Name}耗时{cost.TotalMilliseconds}ms");
             }
         }
     }
