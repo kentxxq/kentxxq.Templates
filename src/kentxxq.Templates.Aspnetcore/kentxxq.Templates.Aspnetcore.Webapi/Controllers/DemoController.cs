@@ -222,13 +222,26 @@ public class DemoController : ControllerBase
     }
 
     /// <summary>
-    /// 测试服务器端缓存
+    /// 测试内存缓存
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<string> TestServerCache()
+    public async Task<string> TestLocalCacheData()
     {
-        var data = await _demoService.GetCacheData();
+        var data = await _demoService.GetLocalCacheData();
         return data.ToString();
     }
+
+#if (EnableRedis)
+    /// <summary>
+    /// 测试redis缓存
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<string> TestRedisCacheData()
+    {
+        var data = await _demoService.GetRedisCacheData();
+        return data.ToString();
+    }
+#endif
 }

@@ -31,8 +31,6 @@ using EasyCaching.Interceptor.AspectCore;
 using AspectCore.Extensions.DependencyInjection;
 #if (EnableRedis)
 using EasyCaching.Serialization.SystemTextJson.Configurations;
-#else
-using EasyCaching.InMemory;
 #endif
 
 var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
@@ -58,21 +56,15 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
     builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
-#if (EnableRedis)
-    var cacheProviderName = "redis1";
-#else
-    var cacheProviderName = "memory1";
-#endif
     builder.Services.AddEasyCaching(option =>
     {
 #if (EnableRedis)
-        option.UseRedis(builder.Configuration, cacheProviderName)
-              .WithSystemTextJson(cacheProviderName);
-#else
-        option.UseInMemory(builder.Configuration, cacheProviderName);
+        option.UseRedis(builder.Configuration, "redis1")
+              .WithSystemTextJson("redis1");
 #endif
+        option.UseInMemory(builder.Configuration, "memory1");
     });
-    builder.Services.ConfigureAspectCoreInterceptor(option => option.CacheProviderName = cacheProviderName);
+    builder.Services.ConfigureAspectCoreInterceptor(_ => { });
 
 #if (EnableNacos)
     // nacos 服务注册与发现

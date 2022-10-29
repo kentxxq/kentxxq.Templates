@@ -10,9 +10,18 @@ public class DemoService : IDemoService
     }
 
     /// <inheritdoc />
-    public async Task<DateTime> GetCacheData()
+    public async Task<DateTime> GetLocalCacheData()
     {
         await Task.Delay(2);
         return DateTime.Now;
     }
+
+#if (EnableRedis)
+    /// <inheritdoc />
+    public async Task<DateTime> GetRedisCacheData()
+    {
+        await Task.Delay(2);
+        return DateTime.Now;
+    }
+#endif
 }

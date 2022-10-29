@@ -14,13 +14,18 @@ public interface IDemoService
     string GetData();
 
     /// <summary>
-    /// 获取缓存数据
+    /// 获取本地缓存数据
     /// </summary>
     /// <returns></returns>
-#if (EnableRedis)
-    [EasyCachingAble(CacheProviderName = "redis1", Expiration = 10)]
-#else
     [EasyCachingAble(CacheProviderName = "memory1", Expiration = 10)]
+    Task<DateTime> GetLocalCacheData();
+
+#if (EnableRedis)
+    /// <summary>
+    /// 获取redis缓存数据
+    /// </summary>
+    /// <returns></returns>
+    [EasyCachingAble(CacheProviderName = "redis1", Expiration = 10)]
+    Task<DateTime> GetRedisCacheData();
 #endif
-    Task<DateTime> GetCacheData();
 }
