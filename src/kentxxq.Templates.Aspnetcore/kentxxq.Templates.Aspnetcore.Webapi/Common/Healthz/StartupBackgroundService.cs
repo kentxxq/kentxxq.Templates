@@ -32,7 +32,6 @@ public class StartupBackgroundService : BackgroundService
         _hostApplicationLifetime.ApplicationStarted.Register(() =>
         {
             _startupHealthz.StartupCompleted = true;
-            _logger.LogInformation("启动完成");
         });
         await Task.Yield();
     }
