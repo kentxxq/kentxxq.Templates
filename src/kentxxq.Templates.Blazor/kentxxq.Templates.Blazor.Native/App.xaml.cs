@@ -1,12 +1,11 @@
-﻿namespace kentxxq.Templates.Blazor.Native
-{
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
+﻿namespace kentxxq.Templates.Blazor.Native;
 
-            MainPage = new MainPage();
-        }
+public partial class App : Application
+{
+    public App()
+    {
+        InitializeComponent();
+
+        MainPage = new MainPage();
     }
 }

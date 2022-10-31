@@ -1,9 +1,8 @@
+using AspectCore.Extensions.DependencyInjection;
+using EasyCaching.Interceptor.AspectCore;
 using HealthChecks.UI.Client;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
-#if (EnableSignalR)
-using kentxxq.Templates.Aspnetcore.Webapi.Hubs;
-#endif
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
@@ -15,6 +14,9 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
+#if (EnableSignalR)
+using kentxxq.Templates.Aspnetcore.Webapi.Hubs;
+#endif
 #if (EnableDB)
 using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
@@ -27,8 +29,6 @@ using Quartz;
 using Nacos.AspNetCore.V2;
 using kentxxq.Templates.Aspnetcore.Webapi.Common;
 #endif
-using EasyCaching.Interceptor.AspectCore;
-using AspectCore.Extensions.DependencyInjection;
 #if (EnableRedis)
 using EasyCaching.Serialization.SystemTextJson.Configurations;
 #endif
@@ -64,7 +64,7 @@ try
     {
 #if (EnableRedis)
         option.UseRedis(builder.Configuration, "redis1")
-              .WithSystemTextJson("redis1");
+            .WithSystemTextJson("redis1");
 #endif
         option.UseInMemory(builder.Configuration, "memory1");
     });
@@ -86,21 +86,19 @@ try
     builder.Services.AddControllers();
 
     if (builder.Environment.IsDevelopment())
-    {
         // 跨域配置
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy(name: "all",
+            options.AddPolicy("all",
                 policy =>
                 {
                     policy
-                        .SetIsOriginAllowed((host) => true)
+                        .SetIsOriginAllowed(host => true)
                         .AllowCredentials()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
         });
-    }
 
 #if (EnableSignalR)
     //signalR
@@ -285,21 +283,16 @@ try
 
     #region 生命周期
 
-    app.Lifetime.ApplicationStarted.Register(() =>
-    {
-        Log.Information("ApplicationStarted:启动完成");
-    });
+    app.Lifetime.ApplicationStarted.Register(() => { Log.Information("ApplicationStarted:启动完成"); });
     app.Lifetime.ApplicationStopping.Register(() =>
     {
         // shutdown会停止，直到下面的语句执行完成
         Log.Warning("ApplicationStopping:正在关闭");
     });
-    app.Lifetime.ApplicationStopped.Register(() =>
-    {
-        Log.Warning("ApplicationStopped:应用已停止");
-    });
+    app.Lifetime.ApplicationStopped.Register(() => { Log.Warning("ApplicationStopped:应用已停止"); });
 
     #endregion
+
     // 管道最外层配置traceId
     app.Use(async (context, next) =>
     {
@@ -328,10 +321,7 @@ try
     app.UsePathBase(new PathString("/kentxxq.Templates.Aspnetcore"));
     app.UseRouting();
 
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseCors("all");
-    }
+    if (app.Environment.IsDevelopment()) app.UseCors("all");
 
     if (app.Environment.IsDevelopment())
     {
@@ -359,7 +349,7 @@ try
         });
         config.MapHealthChecksUI();
     });
-    
+
     app.Run();
 
     return 0;

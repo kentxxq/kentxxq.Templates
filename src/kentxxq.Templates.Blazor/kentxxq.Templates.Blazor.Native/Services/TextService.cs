@@ -1,12 +1,11 @@
 ﻿using kentxxq.Templates.Blazor.UI.Interfaces;
 
-namespace kentxxq.Templates.Blazor.Native.Services
+namespace kentxxq.Templates.Blazor.Native.Services;
+
+public class TextService : ITextService
 {
-    public class TextService : ITextService
+    public string GetText()
     {
-        public string GetText()
-        {
-            return "data from native";
-        }
+        return "data from native";
     }
 }

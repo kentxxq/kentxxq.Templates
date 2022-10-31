@@ -1,7 +1,6 @@
-﻿namespace kentxxq.Templates.Blazor.UI.Interfaces
+﻿namespace kentxxq.Templates.Blazor.UI.Interfaces;
+
+public interface ITextService
 {
-    public interface ITextService
-    {
-        string GetText();
-    }
+    string GetText();
 }

@@ -29,10 +29,7 @@ public class StartupBackgroundService : BackgroundService
     /// <exception cref="NotImplementedException"></exception>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _hostApplicationLifetime.ApplicationStarted.Register(() =>
-        {
-            _startupHealthz.StartupCompleted = true;
-        });
+        _hostApplicationLifetime.ApplicationStarted.Register(() => { _startupHealthz.StartupCompleted = true; });
         await Task.Yield();
     }
 }

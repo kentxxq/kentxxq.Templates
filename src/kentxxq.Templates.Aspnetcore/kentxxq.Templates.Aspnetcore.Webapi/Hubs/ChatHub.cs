@@ -9,7 +9,7 @@ public class ChatHub : Hub
 {
     private readonly ILogger<ChatHub> _logger;
 
-    
+
     /// <summary>
     /// 依赖注入
     /// </summary>
