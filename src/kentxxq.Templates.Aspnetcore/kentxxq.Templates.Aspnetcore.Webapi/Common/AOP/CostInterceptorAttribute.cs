@@ -23,8 +23,7 @@ public class CostInterceptorAttribute : AbstractInterceptorAttribute
         finally
         {
             var cost = DateTime.Now - _beginTime;
-            _logger.LogInformation(
-                $"计算{context.Implementation}.{context.ProxyMethod.Name}耗时{cost.TotalMilliseconds}ms");
+            _logger.LogInformation("计算{ContextImplementation}.{ProxyMethodName}耗时{CostTotalMilliseconds}ms", context.Implementation, context.ProxyMethod.Name, cost.TotalMilliseconds);
         }
     }
 }
