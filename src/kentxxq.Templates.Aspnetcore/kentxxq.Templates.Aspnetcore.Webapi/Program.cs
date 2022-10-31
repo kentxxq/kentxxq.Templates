@@ -37,6 +37,7 @@ var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{
 
 Log.Logger = new LoggerConfiguration()
     .Filter.ByExcluding("RequestPath like '/health%'")
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Update", LogEventLevel.Warning)
     .MinimumLevel.Override("System.Net.Http.HttpClient.health-checks.LogicalHandler", LogEventLevel.Warning)
     .MinimumLevel.Override("System.Net.Http.HttpClient.health-checks.ClientHandler", LogEventLevel.Warning)
@@ -330,6 +331,8 @@ try
     }
 
     app.UseOpenTelemetryPrometheusScrapingEndpoint();
+    // 下面开始正式处理请求
+    app.UseSerilogRequestLogging();
     app.UseResponseCaching();
     app.MapControllers();
 #if (EnableSignalR)
