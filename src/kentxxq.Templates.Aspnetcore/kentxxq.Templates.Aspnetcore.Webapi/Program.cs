@@ -59,7 +59,7 @@ Log.Information(@"健康检查UI地址: http://127.0.0.1:5000/healthchecks-ui");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    if (builder.Environment.IsDevelopment())
+    if (!builder.Environment.IsProduction())
     {
         builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
     }
