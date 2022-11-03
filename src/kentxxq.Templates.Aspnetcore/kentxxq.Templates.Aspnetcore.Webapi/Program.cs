@@ -63,6 +63,10 @@ try
     {
         builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
     }
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.All;
+    });
     builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
     builder.Services.AddEasyCaching(option =>
     {
@@ -319,6 +323,7 @@ try
             }
         });
     });
+    app.UseForwardedHeaders();
 
     // 移除掉 /kentxxq.Templates.Aspnetcore 前缀
     // 例如请求 kentxxq.com/kentxxq.Templates.Aspnetcore/api/Demo/GetData 就会变成 kentxxq.com/api/Demo/GetData
