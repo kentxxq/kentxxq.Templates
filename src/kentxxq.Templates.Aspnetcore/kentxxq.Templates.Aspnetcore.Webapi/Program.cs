@@ -67,6 +67,10 @@ try
     {
         options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.All;
     });
+#if (EnableBlazor)
+    builder.Services.AddControllersWithViews();
+    builder.Services.AddRazorPages();
+#endif
     builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
     builder.Services.AddEasyCaching(option =>
     {
@@ -324,16 +328,20 @@ try
         });
     });
     app.UseForwardedHeaders();
+#if (EnableBlazor)
+    app.UseWebAssemblyDebugging();
+    app.UseBlazorFrameworkFiles();
+    app.UseStaticFiles();
+#endif
 
     // 移除掉 /kentxxq.Templates.Aspnetcore 前缀
     // 例如请求 kentxxq.com/kentxxq.Templates.Aspnetcore/api/Demo/GetData 就会变成 kentxxq.com/api/Demo/GetData
     app.UsePathBase(new PathString("/kentxxq.Templates.Aspnetcore"));
     app.UseRouting();
 
-    if (app.Environment.IsDevelopment()) app.UseCors("all");
-
     if (app.Environment.IsDevelopment())
     {
+        app.UseCors("all");
         app.UseSwagger();
         app.UseSwaggerUI(u => { u.SwaggerEndpoint("/swagger/Examples/swagger.json", "Examples"); });
     }
@@ -342,6 +350,9 @@ try
     // 下面开始正式处理请求
     app.UseSerilogRequestLogging();
     app.UseResponseCaching();
+#if (EnableBlazor)
+    app.MapRazorPages();
+#endif
     app.MapControllers();
 #if (EnableSignalR)
     app.MapHub<ChatHub>("/chatHub");
@@ -359,6 +370,9 @@ try
             Predicate = healthCheck => healthCheck.Tags.Contains("startup")
         });
         config.MapHealthChecksUI();
+#if (EnableBlazor)
+        config.MapFallbackToFile("index.html");
+#endif
     });
 
     app.Run();

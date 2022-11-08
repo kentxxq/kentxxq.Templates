@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Blazor.UI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Blazor.Native", "src\kentxxq.Templates.Blazor\kentxxq.Templates.Blazor.Native\kentxxq.Templates.Blazor.Native.csproj", "{665CC416-6924-4212-A9DB-5D2C90FDD4AC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Aspnetcore.UI", "src\kentxxq.Templates.Aspnetcore\kentxxq.Templates.Aspnetcore.UI\kentxxq.Templates.Aspnetcore.UI.csproj", "{4C6F91EA-FD38-4F80-A58A-AE0F453795D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{665CC416-6924-4212-A9DB-5D2C90FDD4AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{665CC416-6924-4212-A9DB-5D2C90FDD4AC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{665CC416-6924-4212-A9DB-5D2C90FDD4AC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{4C6F91EA-FD38-4F80-A58A-AE0F453795D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C6F91EA-FD38-4F80-A58A-AE0F453795D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C6F91EA-FD38-4F80-A58A-AE0F453795D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C6F91EA-FD38-4F80-A58A-AE0F453795D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{D7A7C9E4-A0B8-4D3F-A580-27382B11C1BD} = {D4E60D38-F08D-4CE1-8863-F6BEB935E365}
 		{4F6B29D3-B607-4F5A-9C0C-37ED5CD70599} = {D4E60D38-F08D-4CE1-8863-F6BEB935E365}
 		{665CC416-6924-4212-A9DB-5D2C90FDD4AC} = {D4E60D38-F08D-4CE1-8863-F6BEB935E365}
+		{4C6F91EA-FD38-4F80-A58A-AE0F453795D1} = {98F15998-A1F8-484B-95BD-1D2B7D01CD0E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E5508FA-0271-4B86-B536-48B532D51034}

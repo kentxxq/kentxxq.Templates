@@ -43,6 +43,12 @@
             "datatype": "bool",
             "defaultValue": "false",
             "isRequired": false
+        },
+        "EnableBlazor": {
+            "type": "parameter",
+            "datatype": "bool",
+            "defaultValue": "false",
+            "isRequired": false
         }
     },
     "sources": [
@@ -73,6 +79,12 @@
                     "condition": "(!EnableNacos)",
                     "exclude": [
                         "kentxxq.Templates.Aspnetcore.Webapi/Common/NacosSettings.cs"
+                    ]
+                },
+                {
+                    "condition": "(!EnableBlazor)",
+                    "exclude": [
+                        "kentxxq.Templates.Aspnetcore.UI/**"
                     ]
                 },
                 {
