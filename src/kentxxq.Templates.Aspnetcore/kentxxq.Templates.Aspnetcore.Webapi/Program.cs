@@ -86,11 +86,7 @@ try
     // nacos 服务注册与发现
     builder.Services.AddNacosAspNet(builder.Configuration, "NacosConfig");
     // nacos 配置中心
-    builder.Host.ConfigureAppConfiguration((_, configBuilder) =>
-    {
-        var c = configBuilder.Build();
-        configBuilder.AddNacosV2Configuration(c.GetSection("NacosConfig"));
-    });
+    builder.Configuration.AddNacosV2Configuration(builder.Configuration.GetSection("NacosConfig"));
     // nacos 读取对应配置到对象
     builder.Services.Configure<NacosSettings>(builder.Configuration.GetSection("NacosSettings"));
 #endif
