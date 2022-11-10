@@ -312,6 +312,7 @@ try
         await next();
     });
 
+    // 处理异常
     app.UseExceptionHandler(b =>
     {
         b.Run(async context =>
@@ -327,7 +328,9 @@ try
             }
         });
     });
+    // 获取nginx代理信息
     app.UseForwardedHeaders();
+
 #if (EnableBlazor)
     app.UseWebAssemblyDebugging();
     app.UseBlazorFrameworkFiles();
@@ -358,22 +361,26 @@ try
     app.MapHub<ChatHub>("/chatHub");
 #endif
 
-    app.UseEndpoints(config =>
+    #region 健康检查管道
+
+    app.MapHealthChecks("/healthz", new HealthCheckOptions
     {
-        config.MapHealthChecks("/healthz", new HealthCheckOptions
-        {
-            Predicate = _ => true,
-            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-        });
-        config.MapHealthChecks("/healthz/startup", new HealthCheckOptions
-        {
-            Predicate = healthCheck => healthCheck.Tags.Contains("startup")
-        });
-        config.MapHealthChecksUI();
-#if (EnableBlazor)
-        config.MapFallbackToFile("index.html");
-#endif
+        Predicate = _ => true,
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
     });
+
+    app.MapHealthChecks("/healthz/startup", new HealthCheckOptions
+    {
+        Predicate = healthCheck => healthCheck.Tags.Contains("startup")
+    });
+
+    app.MapHealthChecksUI();
+
+    #endregion
+
+#if (EnableBlazor)
+    app.MapFallbackToFile("index.html");
+#endif
 
     app.Run();
 
