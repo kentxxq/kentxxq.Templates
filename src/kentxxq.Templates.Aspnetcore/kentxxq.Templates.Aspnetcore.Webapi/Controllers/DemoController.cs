@@ -16,6 +16,7 @@ using Nacos.AspNetCore.V2;
 using Nacos.V2;
 using Microsoft.Extensions.Options;
 #endif
+using Microsoft.AspNetCore.Authorization;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers;
 
@@ -244,4 +245,18 @@ public class DemoController : ControllerBase
         return data.ToString();
     }
 #endif
+
+    [Authorize]
+    [HttpGet]
+    public string GetAuthData()
+    {
+        return "123";
+    }
+
+    [Authorize(AuthenticationSchemes ="Test",Policy ="is_admin",Roles ="admin")]
+    [HttpGet]
+    public string GetAuthData2()
+    {
+        return "123";
+    }
 }

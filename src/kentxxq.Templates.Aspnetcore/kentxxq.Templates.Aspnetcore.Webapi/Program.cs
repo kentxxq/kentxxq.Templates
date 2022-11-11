@@ -67,10 +67,27 @@ try
     {
         options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.All;
     });
+
+    #region JWT配置
+    
+    builder.Services.AddAuthentication("Test") // controller没有配置方案的时候，使用Test认证
+        .AddJwtBearer() // 等同于AddJwtBearer("Bearer")
+        .AddJwtBearer("Test");
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("is_admin", policy => {
+            policy.RequireAuthenticatedUser();
+            policy.RequireClaim("is_admin", "true");
+        });
+    });
+    #endregion
+
 #if (EnableBlazor)
     builder.Services.AddControllersWithViews();
     builder.Services.AddRazorPages();
 #endif
+
     builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
     builder.Services.AddEasyCaching(option =>
     {
@@ -112,8 +129,10 @@ try
     //signalR
     builder.Services.AddSignalR();
 #endif
+
+    // 启用响应缓存
     builder.Services.AddResponseCaching();
-    // serilog
+    // serilog日志
     builder.Host.UseSerilog();
 
 #if (EnableDB)
@@ -346,13 +365,19 @@ try
     }
 
     app.UseOpenTelemetryPrometheusScrapingEndpoint();
-    // 下面开始正式处理请求
     app.UseSerilogRequestLogging();
+
+    // 下面开始正式处理请求
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.UseResponseCaching();
+
 #if (EnableBlazor)
     app.MapRazorPages();
 #endif
+
     app.MapControllers();
+
 #if (EnableSignalR)
     app.MapHub<ChatHub>("/chatHub");
 #endif

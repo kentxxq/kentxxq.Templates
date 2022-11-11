@@ -16,6 +16,7 @@
         <PackageReference Include="EasyCaching.Interceptor.AspectCore" Version="1.7.0" />
         <PackageReference Include="EasyCaching.Redis" Version="1.7.0" Condition=" '$(EnableRedis)' != 'false' " />
         <PackageReference Include="EasyCaching.Serialization.SystemTextJson" Version="1.7.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.0" Condition=" '$(EnableBlazor)' != 'false' " />
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
         <PackageReference Include="MySql.Data" Version="8.0.31" Condition=" '$(EnableQuartz)' != 'false' " />
