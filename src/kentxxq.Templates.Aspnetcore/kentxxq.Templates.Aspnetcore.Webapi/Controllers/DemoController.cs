@@ -29,6 +29,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers;
 public class DemoController : ControllerBase
 {
     private readonly IDemoService _demoService;
+    private readonly JWTService _jwtService;
     private readonly IIpService _ipService;
 #if (EnableQuartz)
     private readonly ISchedulerFactory _schedulerFactory;
@@ -48,6 +49,7 @@ public class DemoController : ControllerBase
     /// <inheritdoc />
     public DemoController(
         IDemoService demoService
+        ,JWTService jwtService
         , IIpService ipService
 #if (EnableQuartz)
         , ISchedulerFactory schedulerFactory
@@ -65,6 +67,7 @@ public class DemoController : ControllerBase
     )
     {
         _demoService = demoService;
+        _jwtService = jwtService;
         _ipService = ipService;
 #if (EnableQuartz)
         _schedulerFactory = schedulerFactory;
@@ -150,10 +153,19 @@ public class DemoController : ControllerBase
     /// <param name="password"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ResultModel<bool>> Login(string username, string password)
+    public async Task<ResultModel<string>> Login(string username, string password)
     {
-        var result = await _userService.Login(username, password);
-        return ResultModel<bool>.Ok(result);
+        var user = await _userService.Login(username, password);
+        if (user is not null)
+        {
+            var token = _jwtService.GetToken(user.Id, user.Username, new List<string>{ "admin" });
+            return ResultModel<string>.Ok(token);
+        }
+        else
+        {
+            return ResultModel<string>.Error("登录失败，用户名或密码错误","");
+        }
+        
     }
 
     /// <summary>
@@ -258,13 +270,24 @@ public class DemoController : ControllerBase
     }
 
     /// <summary>
-    /// 指定需要通过is_admin，并且角色是admin
+    /// 角色是admin或者superadmin
     /// </summary>
     /// <returns></returns>
-    [Authorize(AuthenticationSchemes ="Bearer",Policy ="is_admin",Roles ="admin")]
+    [Authorize(AuthenticationSchemes ="Bearer",Roles ="admin,superadmin")]
     [HttpGet]
     public string GetAdminData()
     {
         return "AdminData";
+    }
+    
+    /// <summary>
+    /// 指定is_allow策略，自定义策略
+    /// </summary>
+    /// <returns></returns>
+    [Authorize(AuthenticationSchemes ="Bearer",Policy ="is_allow")]
+    [HttpGet]
+    public string GetAllowData()
+    {
+        return "AllowData";
     }
 }

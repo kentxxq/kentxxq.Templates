@@ -14,7 +14,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        Task<bool> Login(string username, string password);
+        Task<User?> Login(string username, string password);
 
         /// <summary>
         /// 获取用户的地址列表

@@ -28,12 +28,12 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
         }
 
         /// <inheritdoc />
-        public async Task<bool> Login(string username, string password)
+        public async Task<User?> Login(string username, string password)
         {
-            var result = await _sqlSugarClient.Queryable<User>()
+            var user = await _sqlSugarClient.Queryable<User>()
                 .Where(u => u.Username == username && u.Password == password)
-                .AnyAsync();
-            return result;
+                .FirstAsync();
+            return user;
         }
     }
 }

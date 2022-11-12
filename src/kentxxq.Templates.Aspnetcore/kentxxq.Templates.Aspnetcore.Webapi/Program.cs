@@ -32,6 +32,7 @@ using kentxxq.Templates.Aspnetcore.Webapi.Common;
 #if (EnableRedis)
 using EasyCaching.Serialization.SystemTextJson.Configurations;
 #endif
+using System.Net;
 
 var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
 
@@ -76,9 +77,16 @@ try
 
     builder.Services.AddAuthorization(options =>
     {
-        options.AddPolicy("is_admin", policy => {
+        // 角色不能满足，或多种条件组合的时候。采用自定义
+        // dotnet user-jwts create  --claim is_allow=true --claim ken=ken_allow --role admin --role superadmin --audience dotnet-user-jwts  
+        options.AddPolicy("is_allow", policy => {
             policy.RequireAuthenticatedUser();
-            policy.RequireClaim("is_admin", "true");
+            policy.RequireClaim("is_allow", "true");
+            // 多种claim条件组合
+            policy.RequireAssertion((context =>
+            {
+                return context.User.HasClaim(c => c.Type == "ken" && (c.Value == "ken_allow" || c.Value=="admin_allow") );
+            }));
         });
     });
 
@@ -253,6 +261,7 @@ try
     // 自己的服务
     builder.Services.AddTransient<IDemoService, DemoService>();
     builder.Services.AddSingleton<IIpService, IpApiService>();
+    builder.Services.AddSingleton<JWTService>();
 #if (EnableDB)
     builder.Services.AddTransient<IUserService, UserService>();
 #endif
@@ -326,6 +335,20 @@ try
     {
         context.Response.Headers.Add("TraceId", context.TraceIdentifier);
         await next();
+        if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+        {
+            context.Response.StatusCode = StatusCodes.Status200OK;
+            context.Response.ContentType = "application/json";
+            var result = ResultModel<string>.Error("token验证失败", "请重新登录或刷新页面");
+            await context.Response.WriteAsJsonAsync(result);
+        }
+        else if(context.Response.StatusCode ==(int)HttpStatusCode.Forbidden)
+        {
+            context.Response.StatusCode = StatusCodes.Status200OK;
+            context.Response.ContentType = "application/json";
+            var result = ResultModel<string>.Error("权限不足", "您没有权限进行此操作");
+            await context.Response.WriteAsJsonAsync(result);
+        }
     });
 
     // 处理异常
@@ -339,7 +362,7 @@ try
             var exception = context.Features.Get<IExceptionHandlerFeature>();
             if (exception != null)
             {
-                var result = ResultModel<string>.Error(exception.Error.StackTrace ?? "", exception.Error.Message);
+                var result = ResultModel<string>.Error(exception.Error.Message,exception.Error.StackTrace ?? "");
                 await context.Response.WriteAsJsonAsync(result);
             }
         });

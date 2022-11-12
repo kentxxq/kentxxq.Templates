@@ -12,7 +12,7 @@ public class ResultModel<T>
     public ResultStatus Code { get; set; } = ResultStatus.Success;
 
     /// <summary>
-    /// 请求消息
+    /// 简要消息
     /// </summary>
     public string Message { get; set; } = ResultStatus.Success.ToStringFast();
 
@@ -34,12 +34,12 @@ public class ResultModel<T>
     /// <summary>
     /// 失败
     /// </summary>
-    /// <param name="message">请求消息</param>
-    /// <param name="errorStr">错误信息</param>
+    /// <param name="message">简要消息</param>
+    /// <param name="errorStr">详细错误信息</param>
     /// <param name="code">状态码</param>
     /// <returns></returns>
-    public static ResultModel<T> Error(T errorStr, string message, ResultStatus code = ResultStatus.Error)
+    public static ResultModel<T> Error(string message,T errorStr, ResultStatus code = ResultStatus.Error)
     {
-        return new ResultModel<T> { Data = errorStr, Code = code, Message = message };
+        return new ResultModel<T> { Code = code, Message = message, Data = errorStr };
     }
 }
