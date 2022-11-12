@@ -70,7 +70,7 @@ try
 
     #region JWT配置
     
-    builder.Services.AddAuthentication("Test") // controller没有配置方案的时候，使用Test认证
+    builder.Services.AddAuthentication("Bearer") // controller没有配置方案的时候，使用Bearer认证
         .AddJwtBearer() // 等同于AddJwtBearer("Bearer")
         .AddJwtBearer("Test");
 
@@ -81,6 +81,7 @@ try
             policy.RequireClaim("is_admin", "true");
         });
     });
+
     #endregion
 
 #if (EnableBlazor)

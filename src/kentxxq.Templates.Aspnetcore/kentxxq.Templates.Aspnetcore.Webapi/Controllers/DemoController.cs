@@ -246,17 +246,25 @@ public class DemoController : ControllerBase
     }
 #endif
 
+    /// <summary>
+    /// 不需要授权，只要token正确即可
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     [HttpGet]
     public string GetAuthData()
     {
-        return "123";
+        return "AuthData";
     }
 
-    [Authorize(AuthenticationSchemes ="Test",Policy ="is_admin",Roles ="admin")]
+    /// <summary>
+    /// 指定需要通过is_admin，并且角色是admin
+    /// </summary>
+    /// <returns></returns>
+    [Authorize(AuthenticationSchemes ="Bearer",Policy ="is_admin",Roles ="admin")]
     [HttpGet]
-    public string GetAuthData2()
+    public string GetAdminData()
     {
-        return "123";
+        return "AdminData";
     }
 }
