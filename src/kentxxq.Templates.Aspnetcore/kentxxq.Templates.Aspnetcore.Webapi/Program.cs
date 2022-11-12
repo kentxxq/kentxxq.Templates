@@ -252,7 +252,7 @@ try
 
     // 自己的服务
     builder.Services.AddTransient<IDemoService, DemoService>();
-    builder.Services.AddSingleton<IIpService, IpService>();
+    builder.Services.AddSingleton<IIpService, IpApiService>();
 #if (EnableDB)
     builder.Services.AddTransient<IUserService, UserService>();
 #endif

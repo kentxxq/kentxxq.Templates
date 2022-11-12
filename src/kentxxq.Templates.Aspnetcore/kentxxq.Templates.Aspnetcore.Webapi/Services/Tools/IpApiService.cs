@@ -4,7 +4,7 @@ using WebApiClientCore;
 namespace kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 
 /// <inheritdoc />
-public class IpService : IIpService
+public class IpApiService : IIpService
 {
     private readonly IIpApi _ipApi;
 
@@ -12,7 +12,7 @@ public class IpService : IIpService
     /// 依赖注入
     /// </summary>
     /// <param name="ipApi"></param>
-    public IpService(IIpApi ipApi)
+    public IpApiService(IIpApi ipApi)
     {
         _ipApi = ipApi;
     }
