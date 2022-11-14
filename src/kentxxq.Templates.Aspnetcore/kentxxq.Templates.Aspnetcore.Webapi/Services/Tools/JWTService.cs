@@ -29,7 +29,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.Tools
         /// <param name="roles">角色</param>
         /// <param name="schemaName">验证方案名称，默认Bearer</param>
         /// <returns></returns>
-        public string GetToken(int uid, string username, List<string> roles,string schemaName="Bearer")
+        public string GetToken(int uid, string username, IEnumerable<string> roles,string schemaName="Bearer")
         {
             var secret = "";
             var issuer = _configuration.GetValue<string>($"Authentication:Schemes:{schemaName}:ValidIssuer");
