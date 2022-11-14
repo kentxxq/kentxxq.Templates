@@ -12,6 +12,7 @@ using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 #if (EnableQuartz)
 using Quartz;
 using Quartz.Impl.Matchers;
+using System.Security.Claims;
 #endif
 #if (EnableNacos)
 using Nacos.AspNetCore.V2;
@@ -268,12 +269,17 @@ public class DemoController : ControllerBase
     [HttpGet]
     public ResultModel<string> RefreshToken()
     {
-        var token = Request.Headers.Authorization.ToString()[7..];
-        var jwtSecurityToken = new JwtSecurityToken(token);
-        var schemaName = jwtSecurityToken.Subject;
-        var uid = int.Parse(jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.Id).Value);
-        var userName = jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.NickName).Value;
-        var roles = jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.Role).Value.Split(",");
+        //var token = Request.Headers.Authorization.ToString()[7..];
+        //var jwtSecurityToken = new JwtSecurityToken(token);
+        //var schemaName = jwtSecurityToken.Subject;
+        //var uid = int.Parse(jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.Id).Value);
+        //var userName = jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.NickName).Value;
+        //var roles = jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.Role).Value.Split(",");
+        //下面这种方式，来自不同的claim枚举类，取值不统一，但是controller自带。
+        var schemaName = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+        var uid = int.Parse(User.Claims.First(u => u.Type == JwtClaimTypes.Id).Value);
+        var userName = User.Claims.First(u => u.Type == JwtClaimTypes.NickName).Value;
+        var roles = User.Claims.First(u => u.Type == ClaimTypes.Role).Value.Split(",");
         return ResultModel<string>.Ok(_jwtService.GetToken(uid, userName, roles, schemaName));
     }
 
