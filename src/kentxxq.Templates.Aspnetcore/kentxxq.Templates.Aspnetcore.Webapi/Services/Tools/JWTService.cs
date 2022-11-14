@@ -43,9 +43,9 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.Tools
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity("ken-subject"),
                 Claims = new Dictionary<string, object>()
                 {
+                    {JwtClaimTypes.Subject,schemaName},
                     {JwtClaimTypes.Id,uid},
                     {JwtClaimTypes.NickName,username},
                     {JwtClaimTypes.Role,string.Join(",",roles)}

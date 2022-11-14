@@ -1,4 +1,6 @@
-﻿using kentxxq.Templates.Aspnetcore.Webapi.Common;
+﻿using System.IdentityModel.Tokens.Jwt;
+using IdentityModel;
+using kentxxq.Templates.Aspnetcore.Webapi.Common;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
@@ -228,10 +230,10 @@ public class DemoController : ControllerBase
     /// <returns></returns>
     [HttpGet]
     [ResponseCache(Duration = 10, Location = ResponseCacheLocation.Client)]
-    public async Task<string> TestClientCache()
+    public async Task<ResultModel<string>> TestClientCache()
     {
         await Task.Delay(2000);
-        return "1";
+        return ResultModel<string>.Ok("1");
     }
 
     /// <summary>
@@ -239,10 +241,10 @@ public class DemoController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<string> TestLocalCacheData()
+    public async Task<ResultModel<string>> TestLocalCacheData()
     {
         var data = await _demoService.GetLocalCacheData();
-        return data.ToString();
+        return ResultModel<string>.Ok(data.ToString());
     }
 
 #if (EnableRedis)
@@ -251,12 +253,29 @@ public class DemoController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<string> TestRedisCacheData()
+    public async Task<ResultModel<string>> TestRedisCacheData()
     {
         var data = await _demoService.GetRedisCacheData();
-        return data.ToString();
+        return ResultModel<string>.Ok(data.ToString());
     }
 #endif
+
+    /// <summary>
+    /// 刷新token
+    /// </summary>
+    /// <returns>新token</returns>
+    [Authorize]
+    [HttpGet]
+    public ResultModel<string> RefreshToken()
+    {
+        var token = Request.Headers.Authorization.ToString()[7..];
+        var jwtSecurityToken = new JwtSecurityToken(token);
+        var schemaName = jwtSecurityToken.Subject;
+        var uid = int.Parse(jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.Id).Value);
+        var userName = jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.NickName).Value;
+        var roles = jwtSecurityToken.Claims.First(u => u.Type == JwtClaimTypes.Role).Value.Split(",");
+        return ResultModel<string>.Ok(_jwtService.GetToken(uid, userName, roles, schemaName));
+    }
 
     /// <summary>
     /// 不需要授权，只要token正确即可
@@ -264,9 +283,9 @@ public class DemoController : ControllerBase
     /// <returns></returns>
     [Authorize]
     [HttpGet]
-    public string GetAuthData()
+    public ResultModel<string> GetAuthData()
     {
-        return "AuthData";
+        return ResultModel<string>.Ok("AuthData");
     }
 
     /// <summary>
@@ -275,9 +294,9 @@ public class DemoController : ControllerBase
     /// <returns></returns>
     [Authorize(AuthenticationSchemes ="Bearer",Roles ="admin,superadmin")]
     [HttpGet]
-    public string GetAdminData()
+    public ResultModel<string> GetAdminData()
     {
-        return "AdminData";
+        return ResultModel<string>.Ok("AdminData");
     }
     
     /// <summary>
@@ -286,8 +305,8 @@ public class DemoController : ControllerBase
     /// <returns></returns>
     [Authorize(AuthenticationSchemes ="Bearer",Policy ="is_allow")]
     [HttpGet]
-    public string GetAllowData()
+    public ResultModel<string> GetAllowData()
     {
-        return "AllowData";
+        return ResultModel<string>.Ok("AllowData");
     }
 }
