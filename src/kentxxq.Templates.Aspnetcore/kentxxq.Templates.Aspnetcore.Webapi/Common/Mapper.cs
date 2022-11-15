@@ -15,7 +15,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common;
 public static partial class Mapper
 {
     /// <summary>
-    /// ipapi转换成ip通用模型
+    /// ip-api转换成ip通用模型
     /// </summary>
     /// <param name="ipApiModel"></param>
     /// <returns></returns>
