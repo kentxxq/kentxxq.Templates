@@ -7,6 +7,7 @@ using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 using kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 #if (EnableDB)
 using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 #endif
@@ -150,9 +151,10 @@ public class DemoController : ControllerBase
     #region 限速
 
     /// <summary>
-    /// 限速接口
+    /// 限速接口.速率会被 全局策略、fixed策略 同时影响
     /// </summary>
     /// <returns></returns>
+    [EnableRateLimiting("fixed")]
     [HttpGet]
     public ResultModel<string> LimitApi()
     {
@@ -224,8 +226,8 @@ public class DemoController : ControllerBase
     public async Task<ResultModel<SchedulerStatusSO>> GetStatus()
     {
         var scheduler = await _schedulerFactory.GetScheduler();
-        var jobGroups = await scheduler.GetJobGroupNames();
-        var triggerGroups = await scheduler.GetTriggerGroupNames();
+        // var jobGroups = await scheduler.GetJobGroupNames();
+        // var triggerGroups = await scheduler.GetTriggerGroupNames();
         var runningJobs = await scheduler.GetCurrentlyExecutingJobs();
         var metaData = await scheduler.GetMetaData();
         var jobs = await scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());

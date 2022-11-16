@@ -30,19 +30,22 @@ public static class MyRateLimiterExtension
                         ((int)retryAfter.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
 
                 var info =
-                    $"User {context.HttpContext.User.Identity?.Name ?? "Anonymous"} , Endpoint {context.HttpContext.Request.Path} , Ip {context.HttpContext.Connection.RemoteIpAddress}";
-                context.HttpContext.RequestServices.GetService<ILogger>()?
-                    .LogInformation("Limited: {Info}", info);
+                    $"User {context.HttpContext.User.Identity?.Name ?? "Anonymous"}, Endpoint {context.HttpContext.Request.Path}, Ip {context.HttpContext.Connection.RemoteIpAddress?.MapToIPv4()}";
+                context.HttpContext.RequestServices.GetService<ILoggerFactory>()?
+                    .CreateLogger(nameof(MyRateLimiterExtension))
+                    .LogWarning("Limited: {Info}", info);
                 return new ValueTask();
             };
 
-            o.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, IPAddress>(context =>
+            o.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, (IPAddress, string)>(context =>
             {
                 var remoteIpAddress = context.Connection.RemoteIpAddress;
+                var username = "anonymous user";
+                if (context.User.Identity?.IsAuthenticated is true) username = context.User.ToString()!;
 
                 if (!IPAddress.IsLoopback(remoteIpAddress!))
                     return RateLimitPartition.GetTokenBucketLimiter
-                    (remoteIpAddress!, _ =>
+                    ((remoteIpAddress!, username), _ =>
                         new TokenBucketRateLimiterOptions
                         {
                             // 类似 PermitLimit 限制总次数
@@ -56,9 +59,9 @@ public static class MyRateLimiterExtension
                             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                             QueueLimit = 2
                         });
-                return RateLimitPartition.GetNoLimiter(IPAddress.Loopback);
+                return RateLimitPartition.GetNoLimiter((IPAddress.Loopback, "localhost"));
 
-                // return RateLimitPartition.GetTokenBucketLimiter(remoteIpAddress!, _ =>
+                // return RateLimitPartition.GetTokenBucketLimiter((remoteIpAddress!, username), _ =>
                 //     new TokenBucketRateLimiterOptions
                 //     {
                 //         // 类似 PermitLimit 限制总次数
@@ -70,7 +73,7 @@ public static class MyRateLimiterExtension
                 //         // 自动刷新、补充次数
                 //         AutoReplenishment = true,
                 //         QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                //         QueueLimit = 2
+                //         QueueLimit = 0
                 //     }
                 // );
             });
@@ -85,11 +88,11 @@ public static class MyRateLimiterExtension
                 // 时间窗口
                 fo.Window = TimeSpan.FromSeconds(5);
                 // 次数限制
-                fo.PermitLimit = 100;
+                fo.PermitLimit = 5;
                 // 先进先出
                 fo.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                 // 队列大小
-                fo.QueueLimit = 2;
+                fo.QueueLimit = 0;
             });
 
             // 更加平滑
