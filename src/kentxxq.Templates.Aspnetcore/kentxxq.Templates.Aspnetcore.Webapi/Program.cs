@@ -92,6 +92,12 @@ try
 
     #endregion
 
+    #region 限制配置
+
+    builder.Services.AddMyRateLimiter();
+
+    #endregion
+
 #if (EnableBlazor)
     builder.Services.AddControllersWithViews();
     builder.Services.AddRazorPages();
@@ -127,7 +133,7 @@ try
                 policy =>
                 {
                     policy
-                        .SetIsOriginAllowed(host => true)
+                        .SetIsOriginAllowed(_ => true)
                         .AllowCredentials()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
@@ -161,7 +167,7 @@ try
     // 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
     builder.Services.AddHealthChecks()
 #if (EnableDB)
-        .AddMySql(builder.Configuration["Database:ConnectionString"], "k_webapi", tags: new[] { "db" })
+        .AddMySql(builder.Configuration["Database:ConnectionString"] ?? throw new InvalidOperationException(), "k_webapi", tags: new[] { "db" })
 #endif
         .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s", "startup" })
         .AddCheck<LiveHealthz>("live", tags: new[] { "k8s", "live" });
@@ -279,7 +285,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(s =>
     {
-        s.SwaggerDoc("Examples", new OpenApiInfo { Title = "Examples" });
+        s.SwaggerDoc("Examples", new OpenApiInfo { Title = "Examples",Version = "v1"});
 
         // JWT
         s.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
@@ -394,6 +400,8 @@ try
     // 下面开始正式处理请求
     app.UseAuthentication();
     app.UseAuthorization();
+    // 限速应该在缓存设置前面。否则返回数据的时候，ratelimiter=>cache 429，用户端也会缓存。
+    app.UseRateLimiter();
     app.UseResponseCaching();
 
 #if (EnableBlazor)

@@ -20,6 +20,7 @@ using Nacos.V2;
 using Microsoft.Extensions.Options;
 #endif
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers;
 
@@ -314,5 +315,15 @@ public class DemoController : ControllerBase
     public ResultModel<string> GetAllowData()
     {
         return ResultModel<string>.Ok("AllowData");
+    }
+    
+    /// <summary>
+    /// 限速接口
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public ResultModel<string> LimitApi()
+    {
+        return ResultModel<string>.Ok("LimitApi");
     }
 }
