@@ -35,7 +35,8 @@ using kentxxq.Templates.Aspnetcore.Webapi.Common;
 using EasyCaching.Serialization.SystemTextJson.Configurations;
 #endif
 
-var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
+const string logTemplate =
+    "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
 
 Log.Logger = new LoggerConfiguration()
     .Filter.ByExcluding("RequestPath like '/health%'")
@@ -61,11 +62,21 @@ Log.Information(@"健康检查UI地址: http://127.0.0.1:5000/healthchecks-ui");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    #region 非生产读取机密配置
+
     if (!builder.Environment.IsProduction()) builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
+
+    #endregion
+
+    #region 获取前置nginx代理的数据
+
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.ForwardedHeaders = ForwardedHeaders.All;
     });
+
+    #endregion
 
     #region JWT配置
 
@@ -92,16 +103,13 @@ try
 
     #endregion
 
-    #region 限制配置
+    #region 限速配置
 
     builder.Services.AddMyRateLimiter();
 
     #endregion
 
-#if (EnableBlazor)
-    builder.Services.AddControllersWithViews();
-    builder.Services.AddRazorPages();
-#endif
+    #region 添加aop配置、配置缓存
 
     builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
     builder.Services.AddEasyCaching(option =>
@@ -114,16 +122,56 @@ try
     });
     builder.Services.ConfigureAspectCoreInterceptor(_ => { });
 
-#if (EnableNacos)
-    // nacos 服务注册与发现
-    builder.Services.AddNacosAspNet(builder.Configuration, "NacosConfig");
-    // nacos 配置中心
-    builder.Configuration.AddNacosV2Configuration(builder.Configuration.GetSection("NacosConfig"));
-    // nacos 读取对应配置到对象
-    builder.Services.Configure<NacosSettings>(builder.Configuration.GetSection("NacosSettings"));
-#endif
+    #endregion
 
-    builder.Services.AddControllers();
+    #region webapi自动生成
+
+    builder.Services.AddWebApiClient()
+        .UseSourceGeneratorHttpApiActivator();
+    builder.Services.AddHttpApi<IIpApi>();
+
+    #endregion
+
+    #region swagger
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(s =>
+    {
+        s.SwaggerDoc("Examples", new OpenApiInfo { Title = "Examples", Version = "v1" });
+
+        // JWT
+        s.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
+        {
+            // http是Header带 Authorization: Bearer ZGVtbzpwQDU1dzByZA==
+            // apikey 是下面3中方式
+            // 参数带 /something?api_key=abcdef12345
+            // header带 X-API-Key: abcdef12345
+            // cookie带 Cookie: X-API-KEY=abcdef12345
+            Type = SecuritySchemeType.Http,
+            In = ParameterLocation.Header,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description = "JWT Authorization header using the Bearer scheme."
+        });
+        s.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+                },
+                Array.Empty<string>()
+            }
+        });
+
+        // xmlDoc
+        var filePath = Path.Combine(AppContext.BaseDirectory, "MyApi.xml");
+        s.IncludeXmlComments(filePath);
+    });
+
+    #endregion
+
+    #region 跨域配置
 
     if (builder.Environment.IsDevelopment())
         // 跨域配置
@@ -140,20 +188,7 @@ try
                 });
         });
 
-#if (EnableSignalR)
-    //signalR
-    builder.Services.AddSignalR();
-#endif
-
-    // 启用响应缓存
-    builder.Services.AddResponseCaching();
-    // serilog日志
-    builder.Host.UseSerilog();
-
-#if (EnableDB)
-    // 数据库
-    builder.Services.AddSqlsugarSetup(builder.Configuration);
-#endif
+    #endregion
 
     #region 健康检查
 
@@ -204,9 +239,48 @@ try
 
     #endregion
 
+    builder.Services.AddControllers();
+    // 启用响应缓存
+    builder.Services.AddResponseCaching();
+    // serilog日志
+    builder.Host.UseSerilog();
+
+    // 自己的服务
+    builder.Services.AddTransient<IDemoService, DemoService>();
+    builder.Services.AddSingleton<IIpService, IpApiService>();
+    builder.Services.AddSingleton<JWTService>();
+
+#if (EnableDB)
+    builder.Services.AddTransient<IUserService, UserService>();
+#endif
+
+#if (EnableBlazor)
+    builder.Services.AddControllersWithViews();
+    builder.Services.AddRazorPages();
+#endif
+
+#if (EnableNacos)
+    // nacos 服务注册与发现
+    builder.Services.AddNacosAspNet(builder.Configuration, "NacosConfig");
+    // nacos 配置中心
+    builder.Configuration.AddNacosV2Configuration(builder.Configuration.GetSection("NacosConfig"));
+    // nacos 读取对应配置到对象
+    builder.Services.Configure<NacosSettings>(builder.Configuration.GetSection("NacosSettings"));
+#endif
+
+#if (EnableSignalR)
+    //signalR
+    builder.Services.AddSignalR();
+#endif
+
+#if (EnableDB)
+    // 数据库
+    builder.Services.AddSqlsugarSetup(builder.Configuration);
+#endif
+
 #if (EnableQuartz)
 
-    #region quartz
+    #region 定时任务
 
     // 启用quartz定时器
     builder.Services.Configure<QuartzOptions>(builder.Configuration.GetSection("Quartz"));
@@ -265,67 +339,13 @@ try
 
 #endif
 
-    // 自己的服务
-    builder.Services.AddTransient<IDemoService, DemoService>();
-    builder.Services.AddSingleton<IIpService, IpApiService>();
-    builder.Services.AddSingleton<JWTService>();
-#if (EnableDB)
-    builder.Services.AddTransient<IUserService, UserService>();
-#endif
-
-    #region webapi自动生成
-
-    builder.Services.AddWebApiClient()
-        .UseSourceGeneratorHttpApiActivator();
-    builder.Services.AddHttpApi<IIpApi>();
-
-    #endregion
-
-    #region swagger
-
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(s =>
-    {
-        s.SwaggerDoc("Examples", new OpenApiInfo { Title = "Examples", Version = "v1" });
-
-        // JWT
-        s.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
-        {
-            // http是Header带 Authorization: Bearer ZGVtbzpwQDU1dzByZA==
-            // apikey 是下面3中方式
-            // 参数带 /something?api_key=abcdef12345
-            // header带 X-API-Key: abcdef12345
-            // cookie带 Cookie: X-API-KEY=abcdef12345
-            Type = SecuritySchemeType.Http,
-            In = ParameterLocation.Header,
-            Scheme = "bearer",
-            BearerFormat = "JWT",
-            Description = "JWT Authorization header using the Bearer scheme."
-        });
-        s.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
-                },
-                Array.Empty<string>()
-            }
-        });
-
-        // xmlDoc
-        var filePath = Path.Combine(AppContext.BaseDirectory, "MyApi.xml");
-        s.IncludeXmlComments(filePath);
-    });
-
-    #endregion
-
     //var serviceList = builder.Services.ToList(); 所有注入的service列表
 
     // 构建app对象后，开始配置管道
+
     var app = builder.Build();
 
-    #region 生命周期
+    #region 生命周期的事件配置
 
     app.Lifetime.ApplicationStarted.Register(() => { Log.Information("ApplicationStarted:启动完成"); });
     app.Lifetime.ApplicationStopping.Register(() =>
@@ -342,19 +362,24 @@ try
     {
         context.Response.Headers.Add("TraceId", context.TraceIdentifier);
         await next();
-        if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+        switch (context.Response.StatusCode)
         {
-            context.Response.StatusCode = StatusCodes.Status200OK;
-            context.Response.ContentType = "application/json";
-            var result = ResultModel<string>.Error("token验证失败", "请重新登录或刷新页面");
-            await context.Response.WriteAsJsonAsync(result);
-        }
-        else if (context.Response.StatusCode == (int)HttpStatusCode.Forbidden)
-        {
-            context.Response.StatusCode = StatusCodes.Status200OK;
-            context.Response.ContentType = "application/json";
-            var result = ResultModel<string>.Error("权限不足", "您没有权限进行此操作");
-            await context.Response.WriteAsJsonAsync(result);
+            case (int)HttpStatusCode.Unauthorized:
+            {
+                context.Response.StatusCode = StatusCodes.Status200OK;
+                context.Response.ContentType = "application/json";
+                var result = ResultModel<string>.Error("token验证失败", "请重新登录或刷新页面");
+                await context.Response.WriteAsJsonAsync(result);
+                break;
+            }
+            case (int)HttpStatusCode.Forbidden:
+            {
+                context.Response.StatusCode = StatusCodes.Status200OK;
+                context.Response.ContentType = "application/json";
+                var result = ResultModel<string>.Error("权限不足", "您没有权限进行此操作");
+                await context.Response.WriteAsJsonAsync(result);
+                break;
+            }
         }
     });
 
@@ -396,6 +421,24 @@ try
     }
 
     app.UseOpenTelemetryPrometheusScrapingEndpoint();
+
+    #region 健康检查管道
+
+    app.MapHealthChecks("/healthz", new HealthCheckOptions
+    {
+        Predicate = _ => true,
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+
+    app.MapHealthChecks("/healthz/startup", new HealthCheckOptions
+    {
+        Predicate = healthCheck => healthCheck.Tags.Contains("startup")
+    });
+
+    app.MapHealthChecksUI();
+
+    #endregion
+
     app.UseSerilogRequestLogging();
 
     // 下面开始正式处理请求
@@ -415,22 +458,6 @@ try
     app.MapHub<ChatHub>("/chatHub");
 #endif
 
-    #region 健康检查管道
-
-    app.MapHealthChecks("/healthz", new HealthCheckOptions
-    {
-        Predicate = _ => true,
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-    });
-
-    app.MapHealthChecks("/healthz/startup", new HealthCheckOptions
-    {
-        Predicate = healthCheck => healthCheck.Tags.Contains("startup")
-    });
-
-    app.MapHealthChecksUI();
-
-    #endregion
 
 #if (EnableBlazor)
     app.MapFallbackToFile("index.html");
