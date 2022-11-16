@@ -7,12 +7,9 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common.RateLimitPolicy;
 /// <summary>
 /// ip限速
 /// </summary>
-public class IpRateLimitPolicy:IRateLimiterPolicy<IPAddress>
+public class IpRateLimitPolicy : IRateLimiterPolicy<IPAddress>
 {
     private readonly ILogger<UsernameRateLimitPolicy> _logger;
-
-    /// <inheritdoc />
-    public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected { get; }
 
     /// <summary>
     /// 依赖注入
@@ -30,12 +27,14 @@ public class IpRateLimitPolicy:IRateLimiterPolicy<IPAddress>
     }
 
     /// <inheritdoc />
+    public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected { get; }
+
+    /// <inheritdoc />
     public RateLimitPartition<IPAddress> GetPartition(HttpContext httpContext)
     {
         var remoteIp = httpContext.Connection.RemoteIpAddress;
         if (!IPAddress.IsLoopback(remoteIp!))
-        {
-            return RateLimitPartition.GetFixedWindowLimiter(remoteIp!, _ =>new FixedWindowRateLimiterOptions()
+            return RateLimitPartition.GetFixedWindowLimiter(remoteIp!, _ => new FixedWindowRateLimiterOptions
             {
                 // 时间窗口
                 Window = TimeSpan.FromSeconds(5),
@@ -44,9 +43,8 @@ public class IpRateLimitPolicy:IRateLimiterPolicy<IPAddress>
                 // 先进先出
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                 // 队列大小
-                QueueLimit = 2,
+                QueueLimit = 2
             });
-        }
-        return RateLimitPartition.GetNoLimiter<IPAddress>(IPAddress.Loopback);
+        return RateLimitPartition.GetNoLimiter(IPAddress.Loopback);
     }
 }

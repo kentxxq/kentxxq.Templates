@@ -38,7 +38,7 @@ public class ResultModel<T>
     /// <param name="errorStr">详细错误信息</param>
     /// <param name="code">状态码</param>
     /// <returns></returns>
-    public static ResultModel<T> Error(string message,T errorStr, ResultStatus code = ResultStatus.Error)
+    public static ResultModel<T> Error(string message, T errorStr, ResultStatus code = ResultStatus.Error)
     {
         return new ResultModel<T> { Code = code, Message = message, Data = errorStr };
     }

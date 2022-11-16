@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Client\kentxxq.Templates.Blazor.Web.Client.csproj" />
-        <ProjectReference Include="..\Shared\kentxxq.Templates.Blazor.Web.Shared.csproj" />
+        <ProjectReference Include="..\Client\kentxxq.Templates.Blazor.Web.Client.csproj"/>
+        <ProjectReference Include="..\Shared\kentxxq.Templates.Blazor.Web.Shared.csproj"/>
     </ItemGroup>
 
 

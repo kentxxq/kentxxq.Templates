@@ -1,3 +1,4 @@
+using System.Net;
 using AspectCore.Extensions.DependencyInjection;
 using EasyCaching.Interceptor.AspectCore;
 using HealthChecks.UI.Client;
@@ -8,6 +9,7 @@ using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using Serilog;
@@ -32,7 +34,6 @@ using kentxxq.Templates.Aspnetcore.Webapi.Common;
 #if (EnableRedis)
 using EasyCaching.Serialization.SystemTextJson.Configurations;
 #endif
-using System.Net;
 
 var logTemplate = "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
 
@@ -60,17 +61,14 @@ Log.Information(@"健康检查UI地址: http://127.0.0.1:5000/healthchecks-ui");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    if (!builder.Environment.IsProduction())
-    {
-        builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
-    }
+    if (!builder.Environment.IsProduction()) builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
-        options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.All;
+        options.ForwardedHeaders = ForwardedHeaders.All;
     });
 
     #region JWT配置
-    
+
     builder.Services.AddAuthentication("Bearer") // controller没有配置方案的时候，使用Bearer认证
         .AddJwtBearer() // 等同于AddJwtBearer("Bearer")
         .AddJwtBearer("Test");
@@ -79,14 +77,16 @@ try
     {
         // 角色不能满足，或多种条件组合的时候。采用自定义
         // dotnet user-jwts create  --claim is_allow=true --claim ken=ken_allow --role admin --role superadmin --audience dotnet-user-jwts  
-        options.AddPolicy("is_allow", policy => {
+        options.AddPolicy("is_allow", policy =>
+        {
             policy.RequireAuthenticatedUser();
             policy.RequireClaim("is_allow", "true");
             // 多种claim条件组合
-            policy.RequireAssertion((context =>
+            policy.RequireAssertion(context =>
             {
-                return context.User.HasClaim(c => c.Type == "ken" && (c.Value == "ken_allow" || c.Value=="admin_allow") );
-            }));
+                return context.User.HasClaim(c =>
+                    c.Type == "ken" && (c.Value == "ken_allow" || c.Value == "admin_allow"));
+            });
         });
     });
 
@@ -167,7 +167,8 @@ try
     // 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
     builder.Services.AddHealthChecks()
 #if (EnableDB)
-        .AddMySql(builder.Configuration["Database:ConnectionString"] ?? throw new InvalidOperationException(), "k_webapi", tags: new[] { "db" })
+        .AddMySql(builder.Configuration["Database:ConnectionString"] ?? throw new InvalidOperationException(),
+            "k_webapi", tags: new[] { "db" })
 #endif
         .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s", "startup" })
         .AddCheck<LiveHealthz>("live", tags: new[] { "k8s", "live" });
@@ -285,7 +286,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(s =>
     {
-        s.SwaggerDoc("Examples", new OpenApiInfo { Title = "Examples",Version = "v1"});
+        s.SwaggerDoc("Examples", new OpenApiInfo { Title = "Examples", Version = "v1" });
 
         // JWT
         s.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
@@ -348,7 +349,7 @@ try
             var result = ResultModel<string>.Error("token验证失败", "请重新登录或刷新页面");
             await context.Response.WriteAsJsonAsync(result);
         }
-        else if(context.Response.StatusCode ==(int)HttpStatusCode.Forbidden)
+        else if (context.Response.StatusCode == (int)HttpStatusCode.Forbidden)
         {
             context.Response.StatusCode = StatusCodes.Status200OK;
             context.Response.ContentType = "application/json";
@@ -368,7 +369,7 @@ try
             var exception = context.Features.Get<IExceptionHandlerFeature>();
             if (exception != null)
             {
-                var result = ResultModel<string>.Error(exception.Error.Message,exception.Error.StackTrace ?? "");
+                var result = ResultModel<string>.Error(exception.Error.Message, exception.Error.StackTrace ?? "");
                 await context.Response.WriteAsJsonAsync(result);
             }
         });

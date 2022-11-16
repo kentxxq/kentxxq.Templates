@@ -21,15 +21,13 @@ public static class MyRateLimiterExtension
         service.AddRateLimiter(o =>
         {
             #region 全局限速配置
-            
+
             o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             o.OnRejected = (context, token) =>
             {
                 if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
-                {
                     context.HttpContext.Response.Headers.RetryAfter =
                         ((int)retryAfter.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
-                }
 
                 var info =
                     $"User {context.HttpContext.User.Identity?.Name ?? "Anonymous"} , Endpoint {context.HttpContext.Request.Path} , Ip {context.HttpContext.Connection.RemoteIpAddress}";
@@ -43,7 +41,6 @@ public static class MyRateLimiterExtension
                 var remoteIpAddress = context.Connection.RemoteIpAddress;
 
                 if (!IPAddress.IsLoopback(remoteIpAddress!))
-                {
                     return RateLimitPartition.GetTokenBucketLimiter
                     (remoteIpAddress!, _ =>
                         new TokenBucketRateLimiterOptions
@@ -59,9 +56,8 @@ public static class MyRateLimiterExtension
                             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                             QueueLimit = 2
                         });
-                }
                 return RateLimitPartition.GetNoLimiter(IPAddress.Loopback);
-                
+
                 // return RateLimitPartition.GetTokenBucketLimiter(remoteIpAddress!, _ =>
                 //     new TokenBucketRateLimiterOptions
                 //     {
@@ -95,7 +91,7 @@ public static class MyRateLimiterExtension
                 // 队列大小
                 fo.QueueLimit = 2;
             });
-            
+
             // 更加平滑
             o.AddSlidingWindowLimiter("sliding", so =>
             {
@@ -106,7 +102,7 @@ public static class MyRateLimiterExtension
                 so.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                 so.QueueLimit = 2;
             });
-            
+
             o.AddTokenBucketLimiter("token", to =>
             {
                 // 类似 PermitLimit 限制总次数
@@ -120,7 +116,7 @@ public static class MyRateLimiterExtension
                 to.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                 to.QueueLimit = 2;
             });
-            
+
             o.AddConcurrencyLimiter("concurrency", fo =>
             {
                 // 最大并发5

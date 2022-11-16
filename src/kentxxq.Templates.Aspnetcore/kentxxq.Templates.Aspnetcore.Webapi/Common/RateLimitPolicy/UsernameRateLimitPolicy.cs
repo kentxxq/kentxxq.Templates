@@ -6,12 +6,9 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Common.RateLimitPolicy;
 /// <summary>
 /// 用户限速
 /// </summary>
-public class UsernameRateLimitPolicy:IRateLimiterPolicy<string>
+public class UsernameRateLimitPolicy : IRateLimiterPolicy<string>
 {
     private readonly ILogger<UsernameRateLimitPolicy> _logger;
-
-    /// <inheritdoc />
-    public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected { get; }
 
     /// <summary>
     /// 依赖注入
@@ -29,15 +26,15 @@ public class UsernameRateLimitPolicy:IRateLimiterPolicy<string>
     }
 
     /// <inheritdoc />
+    public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected { get; }
+
+    /// <inheritdoc />
     public RateLimitPartition<string> GetPartition(HttpContext httpContext)
     {
         var username = "anonymous user";
-        if (httpContext.User.Identity?.IsAuthenticated is true)
-        {
-            username = httpContext.User.ToString()!;
-        }
+        if (httpContext.User.Identity?.IsAuthenticated is true) username = httpContext.User.ToString()!;
 
-        return RateLimitPartition.GetFixedWindowLimiter(username, _ =>new FixedWindowRateLimiterOptions()
+        return RateLimitPartition.GetFixedWindowLimiter(username, _ => new FixedWindowRateLimiterOptions
         {
             // 时间窗口
             Window = TimeSpan.FromSeconds(5),
@@ -46,7 +43,7 @@ public class UsernameRateLimitPolicy:IRateLimiterPolicy<string>
             // 先进先出
             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
             // 队列大小
-            QueueLimit = 2,
+            QueueLimit = 2
         });
     }
 }
