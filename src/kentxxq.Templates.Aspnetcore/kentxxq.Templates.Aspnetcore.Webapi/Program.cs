@@ -229,6 +229,11 @@ try
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddRuntimeInstrumentation()
+            .AddEventCountersInstrumentation(o =>
+            {
+                o.RefreshIntervalSecs = 1;
+                o.AddEventSources("Microsoft.AspNetCore.Hosting");
+            })
             ;
     });
 
