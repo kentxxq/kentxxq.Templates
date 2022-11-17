@@ -8,6 +8,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/kentxxq.Templates.Aspnetcore/kentxxq.Templates.Aspnetcore.Webapi/kentxxq.Templates.Aspnetcore.Webapi.csproj", "src/kentxxq.Templates.Aspnetcore/kentxxq.Templates.Aspnetcore.Webapi/"]
 COPY ["src/kentxxq.Templates.Aspnetcore/kentxxq.Templates.Aspnetcore.DB/kentxxq.Templates.Aspnetcore.DB.csproj", "src/kentxxq.Templates.Aspnetcore/kentxxq.Templates.Aspnetcore.DB/"]
+COPY ["src/kentxxq.Templates.Aspnetcore/kentxxq.Templates.Aspnetcore.UI/kentxxq.Templates.Aspnetcore.UI.csproj", "src/kentxxq.Templates.Aspnetcore/kentxxq.Templates.Aspnetcore.UI/"]
 RUN dotnet restore "src/kentxxq.Templates.Aspnetcore/kentxxq.Templates.Aspnetcore.Webapi/kentxxq.Templates.Aspnetcore.Webapi.csproj"
 COPY . .
 WORKDIR "/src/src/kentxxq.Templates.Aspnetcore/kentxxq.Templates.Aspnetcore.Webapi"
