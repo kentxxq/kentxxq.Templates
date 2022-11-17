@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Security.Claims;
 using IdentityModel;
 using kentxxq.Templates.Aspnetcore.Webapi.Common;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;

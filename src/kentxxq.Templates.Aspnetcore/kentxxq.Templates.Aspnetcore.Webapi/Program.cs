@@ -4,6 +4,7 @@ using EasyCaching.Interceptor.AspectCore;
 using HealthChecks.UI.Client;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
+using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.ExternalApi;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
