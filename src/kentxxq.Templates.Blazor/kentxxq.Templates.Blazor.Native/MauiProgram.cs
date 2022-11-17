@@ -1,5 +1,6 @@
 ﻿using kentxxq.Templates.Blazor.Native.Services;
 using kentxxq.Templates.Blazor.UI.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace kentxxq.Templates.Blazor.Native;
 
@@ -15,6 +16,7 @@ public static class MauiProgram
         builder.Services.AddMauiBlazorWebView();
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
+        builder.Logging.AddDebug();
 #endif
         // 自己的服务配置
         builder.Services.AddSingleton<ITextService, TextService>();
