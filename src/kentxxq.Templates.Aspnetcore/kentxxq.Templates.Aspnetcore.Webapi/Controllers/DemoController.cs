@@ -15,7 +15,6 @@ using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 #if (EnableQuartz)
 using Quartz;
 using Quartz.Impl.Matchers;
-using System.Security.Claims;
 #endif
 #if (EnableNacos)
 using Nacos.AspNetCore.V2;

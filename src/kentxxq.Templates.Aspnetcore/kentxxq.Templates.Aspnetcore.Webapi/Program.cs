@@ -21,7 +21,6 @@ using Serilog.Sinks.SystemConsole.Themes;
 using kentxxq.Templates.Aspnetcore.Webapi.Hubs;
 #endif
 #if (EnableDB)
-using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo;
 #endif
 #if (EnableQuartz)
