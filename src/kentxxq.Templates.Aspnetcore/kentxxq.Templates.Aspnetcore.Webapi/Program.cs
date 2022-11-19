@@ -57,6 +57,7 @@ Log.Information(@"swagger请求地址: http://127.0.0.1:5000/swagger/index.html"
 Log.Information(@"就绪检查地址: http://127.0.0.1:5000/healthz/startup");
 Log.Information(@"存活检查地址: http://127.0.0.1:5000/healthz");
 Log.Information(@"健康检查UI地址: http://127.0.0.1:5000/healthchecks-ui");
+Log.Information(@"metrics监控地址: http://127.0.0.1:5000/metrics");
 
 
 try
