@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using System.Globalization;
 using System.Security.Claims;
 using IdentityModel;
 using kentxxq.Templates.Aspnetcore.Webapi.Common;
@@ -32,6 +34,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Controllers;
 [ApiController]
 public class DemoController : ControllerBase
 {
+    private readonly Counter<int> _metricsCounter;
     private readonly IDemoService _demoService;
     private readonly IIpService _ipService;
     private readonly JWTService _jwtService;
@@ -40,7 +43,8 @@ public class DemoController : ControllerBase
 
     /// <inheritdoc />
     public DemoController(
-        IDemoService demoService
+        Meter meter
+        , IDemoService demoService
         , JWTService jwtService
         , IIpService ipService
 #if (EnableQuartz)
@@ -58,6 +62,7 @@ public class DemoController : ControllerBase
 #endif
     )
     {
+        _metricsCounter = meter.CreateCounter<int>("MetricsRequested", "times", "请求了多少次路由");
         _demoService = demoService;
         _jwtService = jwtService;
         _ipService = ipService;
@@ -77,6 +82,28 @@ public class DemoController : ControllerBase
     }
 
     #endregion
+
+    /// <summary>
+    /// 记录metrics
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public ResultModel<string> TestMetrics()
+    {
+        _metricsCounter.Add(1,new TagList{{"url","TestMetrics"}});
+        return ResultModel<string>.Ok("记录成功");
+    }
+    
+    /// <summary>
+    /// 记录metrics2
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public ResultModel<string> TestMetrics2()
+    {
+        _metricsCounter.Add(1,new TagList{{"url","TestMetrics2"}});
+        return ResultModel<string>.Ok("记录成功");
+    }
 
     /// <summary>
     /// 获取demo数据

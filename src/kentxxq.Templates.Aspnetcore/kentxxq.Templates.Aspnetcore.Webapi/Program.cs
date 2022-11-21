@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using System.Net;
 using AspectCore.Extensions.DependencyInjection;
 using EasyCaching.Interceptor.AspectCore;
@@ -35,6 +36,7 @@ using kentxxq.Templates.Aspnetcore.Webapi.Common;
 using EasyCaching.Serialization.SystemTextJson.Configurations;
 #endif
 
+const string appName = "kentxxq.Templates.Aspnetcore";
 const string logTemplate =
     "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
 
@@ -52,7 +54,7 @@ Log.Logger = new LoggerConfiguration()
         rollingInterval: RollingInterval.Day, retainedFileCountLimit: 1)
     .CreateLogger();
 Log.Information("启动中...");
-Log.Information(@"请求地址: http://127.0.0.1:5000/ 或 http://127.0.0.1:5000/kentxxq.Templates.Aspnetcore/ ");
+Log.Information(@$"请求地址: http://127.0.0.1:5000/ 或 http://127.0.0.1:5000/{appName}/ ");
 Log.Information(@"swagger请求地址: http://127.0.0.1:5000/swagger/index.html");
 Log.Information(@"就绪检查地址: http://127.0.0.1:5000/healthz/startup");
 Log.Information(@"存活检查地址: http://127.0.0.1:5000/healthz");
@@ -216,6 +218,9 @@ try
 
     #region opentelemetry
 
+    var meter = new Meter(appName,"1.0.0");
+    builder.Services.AddSingleton(meter);
+
     builder.Services.AddOpenTelemetryMetrics(b =>
     {
         //b.AddPrometheusExporter(options =>
@@ -227,6 +232,7 @@ try
         //    .AddRuntimeInstrumentation();
 
         b.AddPrometheusExporter()
+            .AddMeter(appName)
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddRuntimeInstrumentation()
@@ -416,7 +422,7 @@ try
 
     // 移除掉 /kentxxq.Templates.Aspnetcore 前缀
     // 例如请求 kentxxq.com/kentxxq.Templates.Aspnetcore/api/Demo/GetData 就会变成 kentxxq.com/api/Demo/GetData
-    app.UsePathBase(new PathString("/kentxxq.Templates.Aspnetcore"));
+    app.UsePathBase(new PathString($"/{appName}"));
     app.UseRouting();
 
     if (app.Environment.IsDevelopment())
