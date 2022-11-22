@@ -6,7 +6,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 /// <summary>
 /// sqlsugar的DI
 /// </summary>
-public static class SqlsugarSetupExtension
+public static class MySqlsugarSetupExtension
 {
     /// <summary>
     /// 拓展方法
