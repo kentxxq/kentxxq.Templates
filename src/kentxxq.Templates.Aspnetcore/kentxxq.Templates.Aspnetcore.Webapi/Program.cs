@@ -269,6 +269,7 @@ try
     builder.Services.AddTransient<IDemoService, DemoService>();
     builder.Services.AddSingleton<IIpService, IpApiService>();
     builder.Services.AddSingleton<JWTService>();
+    builder.Services.AddMyEventListener();
 
 #if (EnableDB)
     builder.Services.AddTransient<IUserService, UserService>();
