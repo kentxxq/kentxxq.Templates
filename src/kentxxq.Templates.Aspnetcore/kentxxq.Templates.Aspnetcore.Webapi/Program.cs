@@ -1,9 +1,7 @@
-using System.Diagnostics.Metrics;
 using System.Net;
 using AspectCore.Extensions.DependencyInjection;
 using EasyCaching.Interceptor.AspectCore;
 using HealthChecks.UI.Client;
-using kentxxq.Templates.Aspnetcore.Webapi.Common.Healthz;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
@@ -12,8 +10,6 @@ using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.OpenApi.Models;
-using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
@@ -66,113 +62,20 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    #region 非生产读取机密配置
+    #region 基础通用部分,完全不会改动
 
+    // 非生产读取机密配置
     if (!builder.Environment.IsProduction()) builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
-
-    #endregion
-
-    #region 获取前置nginx代理的数据
-
+    // 获取前置nginx代理的数据
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.ForwardedHeaders = ForwardedHeaders.All;
     });
-
-    #endregion
-
-    #region JWT配置
-
-    builder.Services.AddAuthentication("Bearer") // controller没有配置方案的时候，使用Bearer认证
-        .AddJwtBearer() // 等同于AddJwtBearer("Bearer")
-        .AddJwtBearer("Test");
-
-    builder.Services.AddAuthorization(options =>
-    {
-        // 角色不能满足，或多种条件组合的时候。采用自定义
-        // dotnet user-jwts create  --claim is_allow=true --claim ken=ken_allow --role admin --role superadmin --audience dotnet-user-jwts  
-        options.AddPolicy("is_allow", policy =>
-        {
-            policy.RequireAuthenticatedUser();
-            policy.RequireClaim("is_allow", "true");
-            // 多种claim条件组合
-            policy.RequireAssertion(context =>
-            {
-                return context.User.HasClaim(c =>
-                    c.Type == "ken" && (c.Value == "ken_allow" || c.Value == "admin_allow"));
-            });
-        });
-    });
-
-    #endregion
-
-    #region 限速配置
-
-    builder.Services.AddMyRateLimiter();
-
-    #endregion
-
-    #region 添加aop配置、配置缓存
-
-    builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
-    builder.Services.AddEasyCaching(option =>
-    {
-#if (EnableRedis)
-        option.UseRedis(builder.Configuration, "redis1")
-            .WithSystemTextJson("redis1");
-#endif
-        option.UseInMemory(builder.Configuration, "memory1");
-    });
-    builder.Services.ConfigureAspectCoreInterceptor(_ => { });
-
-    #endregion
-
-    #region webapi自动生成
-
-    builder.Services.AddWebApiClient()
-        .UseSourceGeneratorHttpApiActivator();
-    builder.Services.AddHttpApi<IIpApi>();
-
-    #endregion
-
-    #region swagger
-
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(s =>
-    {
-        s.SwaggerDoc("Examples", new OpenApiInfo { Title = "Examples", Version = "v1" });
-
-        // JWT
-        s.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
-        {
-            // http是Header带 Authorization: Bearer ZGVtbzpwQDU1dzByZA==
-            // apikey 是下面3中方式
-            // 参数带 /something?api_key=abcdef12345
-            // header带 X-API-Key: abcdef12345
-            // cookie带 Cookie: X-API-KEY=abcdef12345
-            Type = SecuritySchemeType.Http,
-            In = ParameterLocation.Header,
-            Scheme = "bearer",
-            BearerFormat = "JWT",
-            Description = "JWT Authorization header using the Bearer scheme."
-        });
-        s.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
-                },
-                Array.Empty<string>()
-            }
-        });
-
-        // xmlDoc
-        var filePath = Path.Combine(AppContext.BaseDirectory, "MyApi.xml");
-        s.IncludeXmlComments(filePath);
-    });
-
-    #endregion
+    // 启用响应缓存
+    builder.Services.AddResponseCaching();
+    // serilog日志
+    builder.Host.UseSerilog();
+    builder.Services.AddControllers();
 
     #region 跨域配置
 
@@ -192,78 +95,39 @@ try
         });
 
     #endregion
+    
+    #region webapi自动生成
 
-    #region 健康检查
-
-    builder.Services.AddHealthChecksUI(setup =>
-        {
-            setup.SetEvaluationTimeInSeconds(5)
-                .DisableDatabaseMigrations()
-                .MaximumHistoryEntriesPerEndpoint(50);
-        })
-        .AddInMemoryStorage();
-    // 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
-    builder.Services.AddHealthChecks()
-#if (EnableDB)
-        .AddMySql(builder.Configuration["Database:ConnectionString"] ?? throw new InvalidOperationException(),
-            "k_webapi", tags: new[] { "db" })
-#endif
-        .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s", "startup" })
-        .AddCheck<LiveHealthz>("live", tags: new[] { "k8s", "live" });
-
-    builder.Services.AddSingleton<StartupHealthz>();
-    builder.Services.AddHostedService<StartupBackgroundService>();
+    builder.Services.AddWebApiClient()
+        .UseSourceGeneratorHttpApiActivator();
+    builder.Services.AddHttpApi<IIpApi>();
 
     #endregion
 
-    #region opentelemetry
+    #region 添加aop配置、配置缓存
 
-    var meter = new Meter(appName,"1.0.0");
-    builder.Services.AddSingleton(meter);
-
-    builder.Services.AddOpenTelemetryMetrics(b =>
+    builder.Host.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory());
+    builder.Services.AddEasyCaching(option =>
     {
-        //b.AddPrometheusExporter(options =>
-        //{
-        //    //options.HttpListenerPrefixes = new[] { "https://localhost:443" };
-        //    //options.ScrapeEndpointPath = "/api/metrics";
-        //})
-        //    .AddAspNetCoreInstrumentation()
-        //    .AddRuntimeInstrumentation();
-
-        b.AddPrometheusExporter()
-            .AddMeter(appName)
-            .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation()
-            .AddRuntimeInstrumentation()
-            .AddEventCountersInstrumentation(o =>
-            {
-                o.RefreshIntervalSecs = 1;
-                // https://learn.microsoft.com/en-us/dotnet/core/diagnostics/available-counters
-                // o.AddEventSources("System.Runtime"); 有RuntimeInstrumentation和AspNetCoreInstrumentation就够了
-                o.AddEventSources("Microsoft.AspNetCore.Hosting");
-                // o.AddEventSources("Microsoft.AspNetCore.Http.Connections"); 没看到输出
-                o.AddEventSources("Microsoft-AspNetCore-Server-Kestrel");
-                o.AddEventSources("System.Net.Http");
-                o.AddEventSources("System.Net.NameResolution");
-                // o.AddEventSources("System.Net.Security"); 主要是ssl信息，挂在代理后面不需要这个
-                o.AddEventSources("System.Net.Sockets"); 
-            })
-            ;
+#if (EnableRedis)
+        option.UseRedis(builder.Configuration, "redis1")
+            .WithSystemTextJson("redis1");
+#endif
+        option.UseInMemory(builder.Configuration, "memory1");
     });
-
-    //builder.Services.AddOpenTelemetryTracing(x =>
-    //{
-    //    x.AddQuartzInstrumentation();
-    //});
+    builder.Services.ConfigureAspectCoreInterceptor(_ => { });
 
     #endregion
-
-    builder.Services.AddControllers();
-    // 启用响应缓存
-    builder.Services.AddResponseCaching();
-    // serilog日志
-    builder.Host.UseSerilog();
+    
+    #endregion
+    
+    builder.Services.AddMyJWT()               // jwt配置
+        .AddMySwagger()                       // swagger配置
+        .AddMyRateLimiter()                   // 限速
+        .AddMyOpentelemetry()                 // 监控
+        .AddMyEventListener()                 // 事件源监听
+        .AddMyHealthz(builder.Configuration)  // 健康检查
+        ;
 
     // 自己的服务
     builder.Services.AddTransient<IDemoService, DemoService>();
@@ -271,7 +135,11 @@ try
     builder.Services.AddSingleton<JWTService>();
     builder.Services.AddMyEventListener();
 
+    #region 条件判断部分
+
 #if (EnableDB)
+    // 数据库
+    builder.Services.AddSqlsugarSetup(builder.Configuration);
     builder.Services.AddTransient<IUserService, UserService>();
 #endif
 
@@ -292,11 +160,6 @@ try
 #if (EnableSignalR)
     //signalR
     builder.Services.AddSignalR();
-#endif
-
-#if (EnableDB)
-    // 数据库
-    builder.Services.AddSqlsugarSetup(builder.Configuration);
 #endif
 
 #if (EnableQuartz)
@@ -360,10 +223,11 @@ try
 
 #endif
 
+    #endregion
+    
     //var serviceList = builder.Services.ToList(); 所有注入的service列表
 
     // 构建app对象后，开始配置管道
-
     var app = builder.Build();
 
     #region 生命周期的事件配置

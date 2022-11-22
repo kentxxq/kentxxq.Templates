@@ -16,7 +16,7 @@ public static class MyRateLimiterExtension
     /// </summary>
     /// <param name="service"></param>
     /// <returns></returns>
-    public static void AddMyRateLimiter(this IServiceCollection service)
+    public static IServiceCollection AddMyRateLimiter(this IServiceCollection service)
     {
         service.AddRateLimiter(o =>
         {
@@ -137,5 +137,7 @@ public static class MyRateLimiterExtension
 
             #endregion
         });
+
+        return service;
     }
 }

@@ -13,7 +13,7 @@ public static class MySqlsugarSetupExtension
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
-    public static void AddSqlsugarSetup(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddSqlsugarSetup(this IServiceCollection services, IConfiguration configuration)
     {
         var sqlSugar = new SqlSugarScope(new ConnectionConfig
             {
@@ -30,6 +30,7 @@ public static class MySqlsugarSetupExtension
                 };
             });
         services.AddSingleton<ISqlSugarClient>(sqlSugar); //这边是SqlSugarScope用AddSingleton
+        return services;
     }
 }
 #endif
