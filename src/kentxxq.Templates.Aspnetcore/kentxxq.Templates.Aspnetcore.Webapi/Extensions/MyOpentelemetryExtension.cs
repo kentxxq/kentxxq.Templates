@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Metrics;
 using OpenTelemetry.Metrics;
 #if (EnableTracing)
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 #endif
 namespace kentxxq.Templates.Aspnetcore.Webapi.Extensions;
@@ -11,6 +12,7 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 public static class MyOpentelemetryExtension
 {
     private const string AppName = "kentxxq.Templates.Aspnetcore";
+    private const string AppVersion = "1.0.0";
 
     /// <summary>
     /// 添加opentelemetry
@@ -32,7 +34,7 @@ public static class MyOpentelemetryExtension
     /// <param name="service"></param>
     private static void AddMetrics(IServiceCollection service)
     {
-        var meter = new Meter(AppName, "1.0.0");
+        var meter = new Meter(AppName, AppVersion);
         service.AddSingleton(meter);
 
         service.AddOpenTelemetryMetrics(b =>
@@ -76,6 +78,8 @@ public static class MyOpentelemetryExtension
         service.AddOpenTelemetryTracing(x =>
         {
             x.AddSource(AppName)
+                .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                    .AddService(AppName,AppVersion))
                 .AddAspNetCoreInstrumentation(o =>
                 {
                     o.Filter = r => r.Request.Path != "/healthz";
@@ -116,10 +120,10 @@ public static class MyOpentelemetryExtension
                 // -p 9411:9411 \
                 // jaegertracing/all-in-one:1.39
                 .AddJaegerExporter(o =>
-                    {
-                        o.AgentHost = "8.142.70.33";
-                        o.AgentPort = 6831;
-                    });
+                {
+                    o.AgentHost = "8.142.70.33";
+                    o.AgentPort = 6831;
+                });
         });
     }
 #endif

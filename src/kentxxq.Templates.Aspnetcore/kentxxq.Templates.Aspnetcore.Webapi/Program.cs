@@ -31,10 +31,20 @@ using kentxxq.Templates.Aspnetcore.Webapi.Common;
 #if (EnableRedis)
 using EasyCaching.Serialization.SystemTextJson.Configurations;
 #endif
+#if (EnableTracing)
+using Serilog.Enrichers.Span;
+using System.Diagnostics;
+#endif
+
 
 const string appName = "kentxxq.Templates.Aspnetcore";
+#if (EnableTracing)
+const string logTemplate =
+    "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{TraceId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
+#else
 const string logTemplate =
     "{Timestamp:HH:mm:ss}|{Level:u3}|{RequestId}|{SourceContext}|{Message:lj}{Exception}{NewLine}";
+#endif
 
 Log.Logger = new LoggerConfiguration()
     .Filter.ByExcluding("RequestPath like '/health%'")
@@ -44,10 +54,16 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("System.Net.Http.HttpClient.health-checks.ClientHandler", LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Infrastructure", LogEventLevel.Warning)
+#if (EnableTracing)
+    .Enrich.WithSpan()
+#endif
     .Enrich.FromLogContext()
     .WriteTo.Console(outputTemplate: logTemplate, theme: AnsiConsoleTheme.Code)
-    .WriteTo.File(path: $"{ThisAssembly.Project.AssemblyName}-.log", formatter: new JsonFormatter(renderMessage: true),
-        rollingInterval: RollingInterval.Day, retainedFileCountLimit: 1)
+    .WriteTo.File(
+        path: $"{ThisAssembly.Project.AssemblyName}-.log",
+        formatter: new JsonFormatter(renderMessage: true),
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 1)
     .CreateLogger();
 Log.Information("启动中...");
 Log.Information(@$"请求地址: http://127.0.0.1:5000/ 或 http://127.0.0.1:5000/{appName}/ ");
@@ -95,7 +111,7 @@ try
         });
 
     #endregion
-    
+
     #region webapi自动生成
 
     builder.Services.AddWebApiClient()
@@ -118,9 +134,9 @@ try
     builder.Services.ConfigureAspectCoreInterceptor(_ => { });
 
     #endregion
-    
+
     #endregion
-    
+
     builder.Services.AddMyJWT()               // jwt配置
         .AddMySwagger()                       // swagger配置
         .AddMyRateLimiter()                   // 限速
@@ -223,7 +239,7 @@ try
 #endif
 
     #endregion
-    
+
     //var serviceList = builder.Services.ToList(); 所有注入的service列表
 
     // 构建app对象后，开始配置管道
@@ -244,26 +260,29 @@ try
     // 管道最外层配置traceId
     app.Use(async (context, next) =>
     {
-        context.Response.Headers.Add("TraceId", context.TraceIdentifier);
+#if (EnableTracing)
+        context.Response.Headers.Add("TraceId", Activity.Current?.TraceId.ToString());
+#endif
+        context.Response.Headers.Add("RequestId", context.TraceIdentifier);
         await next();
         switch (context.Response.StatusCode)
         {
             case (int)HttpStatusCode.Unauthorized:
-            {
-                context.Response.StatusCode = StatusCodes.Status200OK;
-                context.Response.ContentType = "application/json";
-                var result = ResultModel<string>.Error("token验证失败", "请重新登录或刷新页面");
-                await context.Response.WriteAsJsonAsync(result);
-                break;
-            }
+                {
+                    context.Response.StatusCode = StatusCodes.Status200OK;
+                    context.Response.ContentType = "application/json";
+                    var result = ResultModel<string>.Error("token验证失败", "请重新登录或刷新页面");
+                    await context.Response.WriteAsJsonAsync(result);
+                    break;
+                }
             case (int)HttpStatusCode.Forbidden:
-            {
-                context.Response.StatusCode = StatusCodes.Status200OK;
-                context.Response.ContentType = "application/json";
-                var result = ResultModel<string>.Error("权限不足", "您没有权限进行此操作");
-                await context.Response.WriteAsJsonAsync(result);
-                break;
-            }
+                {
+                    context.Response.StatusCode = StatusCodes.Status200OK;
+                    context.Response.ContentType = "application/json";
+                    var result = ResultModel<string>.Error("权限不足", "您没有权限进行此操作");
+                    await context.Response.WriteAsJsonAsync(result);
+                    break;
+                }
         }
     });
 
@@ -323,6 +342,7 @@ try
 
     #endregion
 
+    // 简化http记录
     app.UseSerilogRequestLogging();
 
     // 下面开始正式处理请求

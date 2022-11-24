@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.Tracing;
+﻿using System.Diagnostics.Tracing;
 
 namespace kentxxq.Templates.Aspnetcore.Webapi.Common.EventListeners;
 
