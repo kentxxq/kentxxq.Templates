@@ -49,6 +49,12 @@
             "datatype": "bool",
             "defaultValue": "false",
             "isRequired": false
+        },
+        "EnableTracing": {
+            "type": "parameter",
+            "datatype": "bool",
+            "defaultValue": "false",
+            "isRequired": false
         }
     },
     "sources": [

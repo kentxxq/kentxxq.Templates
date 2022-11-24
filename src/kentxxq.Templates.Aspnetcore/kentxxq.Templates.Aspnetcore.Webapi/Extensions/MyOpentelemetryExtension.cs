@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.Metrics;
 using OpenTelemetry.Metrics;
-
+#if (EnableTracing)
+using OpenTelemetry.Trace;
+#endif
 namespace kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 
 /// <summary>
@@ -18,6 +20,9 @@ public static class MyOpentelemetryExtension
     public static IServiceCollection AddMyOpentelemetry(this IServiceCollection service)
     {
         AddMetrics(service);
+#if (EnableTracing)
+        AddTrace(service);
+#endif
         return service;
     }
 
@@ -27,9 +32,9 @@ public static class MyOpentelemetryExtension
     /// <param name="service"></param>
     private static void AddMetrics(IServiceCollection service)
     {
-        var meter = new Meter(AppName,"1.0.0");
+        var meter = new Meter(AppName, "1.0.0");
         service.AddSingleton(meter);
-        
+
         service.AddOpenTelemetryMetrics(b =>
         {
             //b.AddPrometheusExporter(options =>
@@ -56,22 +61,66 @@ public static class MyOpentelemetryExtension
                     o.AddEventSources("System.Net.Http");
                     o.AddEventSources("System.Net.NameResolution");
                     // o.AddEventSources("System.Net.Security"); 主要是ssl信息，挂在代理后面不需要这个
-                    o.AddEventSources("System.Net.Sockets"); 
+                    o.AddEventSources("System.Net.Sockets");
                 })
                 ;
         });
     }
-
+#if (EnableTracing)
     /// <summary>
     /// 添加 trace 追踪数据
     /// </summary>
     /// <param name="service"></param>
     private static void AddTrace(IServiceCollection service)
     {
-        // TODO
-        //builder.Services.AddOpenTelemetryTracing(x =>
-        //{
-        //    x.AddQuartzInstrumentation();
-        //});
+        service.AddOpenTelemetryTracing(x =>
+        {
+            x.AddSource(AppName)
+                .AddAspNetCoreInstrumentation(o =>
+                {
+                    o.Filter = r => r.Request.Path != "/healthz";
+                })
+                .AddHttpClientInstrumentation(o =>
+                {
+                    o.FilterHttpRequestMessage = r => r.RequestUri?.PathAndQuery != "/healthz";
+                })
+                .AddQuartzInstrumentation()
+                // .AddConsoleExporter()
+                // .AddOtlpExporter(o =>
+                // {
+                //     o.Endpoint = new Uri("http://8.142.70.33:4317");
+                //     o.Protocol = OtlpExportProtocol.Grpc;
+                // });
+                
+                // docker run -d --name zipkin -p 9411:9411 openzipkin/zipkin 
+                // .AddZipkinExporter(o =>
+                // {
+                //     o.Endpoint = new Uri("http://8.142.70.33:9411/api/v2/spans");
+                // });
+                
+                // docker run -d --name jaeger \
+                // -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
+                // -e COLLECTOR_OTLP_ENABLED=true \
+                // -e JAEGER_SAMPLER_TYPE=const \
+                // -e JAEGER_SAMPLER_PARAM=1 \
+                // -e JAEGER_REPORTER_LOG_SPANS=true \
+                // -p 6831:6831/udp \
+                // -p 6832:6832/udp \
+                // -p 5778:5778 \
+                // -p 16686:16686 \
+                // -p 4317:4317 \
+                // -p 4318:4318 \
+                // -p 14250:14250 \
+                // -p 14268:14268 \
+                // -p 14269:14269 \
+                // -p 9411:9411 \
+                // jaegertracing/all-in-one:1.39
+                .AddJaegerExporter(o =>
+                    {
+                        o.AgentHost = "8.142.70.33";
+                        o.AgentPort = 6831;
+                    });
+        });
     }
+#endif
 }
