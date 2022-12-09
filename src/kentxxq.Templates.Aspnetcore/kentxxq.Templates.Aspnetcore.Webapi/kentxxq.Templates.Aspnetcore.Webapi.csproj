@@ -59,7 +59,8 @@
         <DockerfileContext>..\..\..</DockerfileContext>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DefineConstants>$(DefineConstants)TRACE;EnableQuartz;EnableDB;EnableSignalR;EnableNacos;EnableRedis;EnableBlazor;EnableTracing</DefineConstants>
+        <!--关掉了EnableTracing-->
+        <DefineConstants>$(DefineConstants)TRACE;EnableQuartz;EnableDB;EnableSignalR;EnableNacos;EnableRedis;EnableBlazor</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <DefineConstants>$(DefineConstants)TRACE</DefineConstants>
