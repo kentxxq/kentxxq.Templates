@@ -11,7 +11,7 @@ IConfiguration config = new ConfigurationBuilder()
 var db = new SqlSugarClient(new ConnectionConfig
 {
     ConnectionString = config["Database:ConnectionString"],
-    DbType = DbType.MySql,
+    DbType = (DbType)int.Parse(config["Database:DbType"] ?? "0"),
     IsAutoCloseConnection = true
 });
 
