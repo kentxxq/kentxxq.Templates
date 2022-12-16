@@ -1,6 +1,4 @@
-﻿
-using System.Reflection;
-#if (EnableDB)
+﻿#if (EnableDB)
 using kentxxq.Templates.Aspnetcore.DB;
 using Serilog;
 using SqlSugar;
@@ -35,22 +33,18 @@ public static class Init
         {
             Log.Warning("数据库连接失败");
             var databaseCreated = db.DbMaintenance.CreateDatabase();
-            if (databaseCreated)
-            {
-                Log.Warning("数据库创建成功，正在初始化中...");
+            if (!databaseCreated) throw;
+            Log.Warning("数据库创建成功，正在初始化中...");
 #pragma warning disable CS8602 // 解引用可能出现空引用。
-                var types = typeof(User).Assembly
-                    .GetTypes()
-                    .Where(it => it.FullName.StartsWith("kentxxq.Templates.Aspnetcore"))
-                    .ToArray();
+            var types = typeof(User).Assembly
+                .GetTypes()
+                .Where(it => it.FullName.StartsWith("kentxxq.Templates.Aspnetcore"))
+                .ToArray();
 #pragma warning restore CS8602 // 解引用可能出现空引用。
-                Log.Warning("开始创建表格");
-                db.CodeFirst.SetStringDefaultLength(200).InitTables(types); //根据types创建表
+            Log.Warning("开始创建表格");
+            db.CodeFirst.SetStringDefaultLength(200).InitTables(types); //根据types创建表
 
-                InitTableData(db);// 初始化数据
-                return;
-            }
-            throw;
+            InitTableData(db);// 初始化表数据
         }
     }
     
