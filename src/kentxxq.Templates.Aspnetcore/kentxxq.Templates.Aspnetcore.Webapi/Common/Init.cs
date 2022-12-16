@@ -73,14 +73,13 @@ public static class Init
 
     private static void SyncTable(ISqlSugarClient db)
     {
-        Log.Warning("数据库创建成功，正在初始化中...");
 #pragma warning disable CS8602 // 解引用可能出现空引用。
         var types = typeof(User).Assembly
             .GetTypes()
             .Where(it => it.FullName.StartsWith("kentxxq.Templates.Aspnetcore"))
             .ToArray();
 #pragma warning restore CS8602 // 解引用可能出现空引用。
-        Log.Warning("开始创建表格");
+        Log.Warning("开始同步表结构");
         db.CodeFirst.SetStringDefaultLength(200).InitTables(types); //根据types创建表
     }
 
