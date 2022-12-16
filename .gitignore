@@ -6,7 +6,6 @@
 
 # kentxxq
 nupkg/
-*.db
 
 # User-specific files
 *.rsuser
