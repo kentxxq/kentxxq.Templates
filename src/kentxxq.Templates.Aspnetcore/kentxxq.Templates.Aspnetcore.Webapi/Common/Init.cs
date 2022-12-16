@@ -1,4 +1,5 @@
 ﻿#if (EnableDB)
+using Microsoft.Data.Sqlite;
 using kentxxq.Templates.Aspnetcore.DB;
 using Serilog;
 using SqlSugar;
@@ -18,16 +19,35 @@ public static class Init
     /// <param name="config"></param>
     public static void InitDatabase(IConfiguration config)
     {
+        var connectionString = config["Database:ConnectionString"];
+        var dbType = (DbType)int.Parse(config["Database:DbType"] ?? "2"); //2是sqlite
         var db = new SqlSugarClient(new ConnectionConfig
         {
-            ConnectionString = config["Database:ConnectionString"],
-            DbType = (DbType)int.Parse(config["Database:DbType"] ?? "0"),
+            ConnectionString = connectionString,
+            DbType = dbType, 
             IsAutoCloseConnection = true
         });
         try
         {
-            db.Ado.CheckConnection();
-            Log.Information("数据库连接成功");
+            // 即使sqlite文件不存在，CheckConnection也会检查通过
+            // 所以单独处理
+            if (dbType == DbType.Sqlite)
+            {
+                var builder = new SqliteConnectionStringBuilder(connectionString);
+                if (File.Exists(builder.DataSource))
+                {
+                    Log.Information("数据库连接成功");
+                }
+                else
+                {
+                    throw new FileNotFoundException(null,builder.DataSource);
+                }
+            }
+            else
+            {
+                db.Ado.CheckConnection();
+                Log.Information("数据库连接成功");
+            }
         }
         catch (Exception)
         {
