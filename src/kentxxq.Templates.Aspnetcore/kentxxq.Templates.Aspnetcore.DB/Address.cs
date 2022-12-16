@@ -2,6 +2,7 @@
 
 namespace kentxxq.Templates.Aspnetcore.DB;
 
+[SugarTable(tableName: nameof(Address), tableDescription: "地址")]
 public class Address
 {
     [SugarColumn(IsIdentity = true, IsPrimaryKey = true)]

@@ -2,6 +2,7 @@
 
 namespace kentxxq.Templates.Aspnetcore.DB;
 
+[SugarTable(tableName: nameof(User), tableDescription: "用户")]
 public class User
 {
     [SugarColumn(IsIdentity = true, IsPrimaryKey = true)]
