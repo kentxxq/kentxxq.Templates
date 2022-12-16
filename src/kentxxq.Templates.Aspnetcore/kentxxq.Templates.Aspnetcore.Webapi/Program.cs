@@ -2,6 +2,7 @@ using System.Net;
 using AspectCore.Extensions.DependencyInjection;
 using EasyCaching.Interceptor.AspectCore;
 using HealthChecks.UI.Client;
+using kentxxq.Templates.Aspnetcore.Webapi.Common;
 using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Extensions;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
@@ -26,7 +27,6 @@ using Quartz;
 #endif
 #if (EnableNacos)
 using Nacos.AspNetCore.V2;
-using kentxxq.Templates.Aspnetcore.Webapi.Common;
 #endif
 #if (EnableRedis)
 using EasyCaching.Serialization.SystemTextJson.Configurations;
