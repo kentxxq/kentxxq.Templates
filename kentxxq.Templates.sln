@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kentxxq.Templates.Aspnetcor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kentxxq.Templates.Aspnetcore.DB", "src\kentxxq.Templates.Aspnetcore\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj", "{344039AC-2C6B-4359-9BAA-00FAB699CF98}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kentxxq.Templates.Aspnetcore.DBManager", "src\kentxxq.Templates.Aspnetcore\kentxxq.Templates.Aspnetcore.DBManager\kentxxq.Templates.Aspnetcore.DBManager.csproj", "{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kentxxq.Templates.Blazor", "kentxxq.Templates.Blazor", "{D4E60D38-F08D-4CE1-8863-F6BEB935E365}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kentxxq.Templates.Blazor.Web.Server", "src\kentxxq.Templates.Blazor\kentxxq.Templates.Blazor.Web\Server\kentxxq.Templates.Blazor.Web.Server.csproj", "{FD7C3277-2774-4B50-B031-6EBC3730DFA9}"
@@ -39,10 +37,6 @@ Global
 		{344039AC-2C6B-4359-9BAA-00FAB699CF98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{344039AC-2C6B-4359-9BAA-00FAB699CF98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{344039AC-2C6B-4359-9BAA-00FAB699CF98}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FD7C3277-2774-4B50-B031-6EBC3730DFA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FD7C3277-2774-4B50-B031-6EBC3730DFA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD7C3277-2774-4B50-B031-6EBC3730DFA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -76,7 +70,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5C199042-75F9-4088-86AA-9E99D2CCFE4F} = {98F15998-A1F8-484B-95BD-1D2B7D01CD0E}
 		{344039AC-2C6B-4359-9BAA-00FAB699CF98} = {98F15998-A1F8-484B-95BD-1D2B7D01CD0E}
-		{A3E2EB3A-ADBE-4BB4-93C7-E4665686CD05} = {98F15998-A1F8-484B-95BD-1D2B7D01CD0E}
 		{FD7C3277-2774-4B50-B031-6EBC3730DFA9} = {D4E60D38-F08D-4CE1-8863-F6BEB935E365}
 		{1BC3BC5C-705A-4C8B-BCBD-8B90242E0A08} = {D4E60D38-F08D-4CE1-8863-F6BEB935E365}
 		{D7A7C9E4-A0B8-4D3F-A580-27382B11C1BD} = {D4E60D38-F08D-4CE1-8863-F6BEB935E365}

@@ -17,7 +17,7 @@ public static class MySqlsugarSetupExtension
     {
         var sqlSugar = new SqlSugarScope(new ConnectionConfig
             {
-                DbType = DbType.MySql,
+                DbType = (DbType)int.Parse(configuration["Database:DbType"] ?? "0"),
                 ConnectionString = configuration["Database:ConnectionString"],
                 IsAutoCloseConnection = true
             },

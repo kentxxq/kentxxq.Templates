@@ -137,12 +137,12 @@ try
 
     #endregion
 
-    builder.Services.AddMyJWT()               // jwt配置
-        .AddMySwagger()                       // swagger配置
-        .AddMyRateLimiter()                   // 限速
-        .AddMyOpentelemetry()                 // 监控
-        .AddMyEventListener()                 // 事件源监听
-        .AddMyHealthz(builder.Configuration)  // 健康检查
+    builder.Services.AddMyJWT() // jwt配置
+        .AddMySwagger() // swagger配置
+        .AddMyRateLimiter() // 限速
+        .AddMyOpentelemetry() // 监控
+        .AddMyEventListener() // 事件源监听
+        .AddMyHealthz(builder.Configuration) // 健康检查
         ;
 
     // 自己的服务
@@ -153,6 +153,7 @@ try
     #region 条件判断部分
 
 #if (EnableDB)
+    Init.InitDatabase(builder.Configuration);
     // 数据库
     builder.Services.AddSqlsugarSetup(builder.Configuration);
     builder.Services.AddTransient<IUserService, UserService>();
@@ -268,21 +269,21 @@ try
         switch (context.Response.StatusCode)
         {
             case (int)HttpStatusCode.Unauthorized:
-                {
-                    context.Response.StatusCode = StatusCodes.Status200OK;
-                    context.Response.ContentType = "application/json";
-                    var result = ResultModel<string>.Error("token验证失败", "请重新登录或刷新页面");
-                    await context.Response.WriteAsJsonAsync(result);
-                    break;
-                }
+            {
+                context.Response.StatusCode = StatusCodes.Status200OK;
+                context.Response.ContentType = "application/json";
+                var result = ResultModel<string>.Error("token验证失败", "请重新登录或刷新页面");
+                await context.Response.WriteAsJsonAsync(result);
+                break;
+            }
             case (int)HttpStatusCode.Forbidden:
-                {
-                    context.Response.StatusCode = StatusCodes.Status200OK;
-                    context.Response.ContentType = "application/json";
-                    var result = ResultModel<string>.Error("权限不足", "您没有权限进行此操作");
-                    await context.Response.WriteAsJsonAsync(result);
-                    break;
-                }
+            {
+                context.Response.StatusCode = StatusCodes.Status200OK;
+                context.Response.ContentType = "application/json";
+                var result = ResultModel<string>.Error("权限不足", "您没有权限进行此操作");
+                await context.Response.WriteAsJsonAsync(result);
+                break;
+            }
         }
     });
 
