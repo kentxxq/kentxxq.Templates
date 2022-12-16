@@ -71,8 +71,7 @@
                 {
                     "condition": "(!EnableDB)",
                     "exclude": [
-                        "kentxxq.Templates.Aspnetcore.DB/**",
-                        "kentxxq.Templates.Aspnetcore.DBManager/**"
+                        "kentxxq.Templates.Aspnetcore.DB/**"
                     ]
                 },
                 {
