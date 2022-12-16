@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>kentxxq.Templates</id>
-        <version>2.3.2</version>
+        <version>2.3.4</version>
         <description>
             Project template for creating a .NET Core tool.
         </description>
@@ -11,8 +11,10 @@
         <packageTypes>
             <packageType name="Template" />
         </packageTypes>
+        <readme>./README.md</readme>
     </metadata>
     <files>
         <file src="src\**\*.*" exclude="src\**\bin\**\*.*;src\**\obj\**\*.*;src\**\*.log" target="Content" />
+        <file src="README.md" />
     </files>
 </package>
