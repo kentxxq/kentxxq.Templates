@@ -1,6 +1,4 @@
 ﻿#if (EnableDB)
-using DbType = SqlSugar.DbType;
-using System.Data;
 using Microsoft.Data.Sqlite;
 using kentxxq.Templates.Aspnetcore.DB;
 using Serilog;
@@ -70,7 +68,7 @@ public static class Init
     private static void CreateDatabase(ISqlSugarClient db)
     {
         var databaseCreated = db.DbMaintenance.CreateDatabase();
-        if (!databaseCreated) throw new DataException("数据库创建失败....");
+        if (!databaseCreated) throw new ApplicationException("数据库创建失败....");
     }
 
     private static void SyncTable(ISqlSugarClient db)
