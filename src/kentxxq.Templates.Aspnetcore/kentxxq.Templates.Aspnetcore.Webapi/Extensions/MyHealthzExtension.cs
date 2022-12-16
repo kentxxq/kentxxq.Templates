@@ -26,7 +26,9 @@ public static class MyHealthzExtension
         // 有更多可用https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
         service.AddHealthChecks()
 #if (EnableDB)
-            .AddMySql(configuration["Database:ConnectionString"] ?? throw new InvalidOperationException(),
+            // .AddMySql(configuration["Database:ConnectionString"] ?? throw new InvalidOperationException(),
+            //     "k_webapi", tags: new[] { "db" })
+            .AddSqlite(configuration["Database:ConnectionString"] ?? throw new InvalidOperationException(),
                 "k_webapi", tags: new[] { "db" })
 #endif
             .AddCheck<StartupHealthz>("startup", tags: new[] { "k8s", "startup" })
