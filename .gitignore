@@ -6,6 +6,7 @@
 
 # kentxxq
 nupkg/
+kentxxq.Templates.Aspnetcore.db
 
 # User-specific files
 *.rsuser
