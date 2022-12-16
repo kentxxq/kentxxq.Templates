@@ -1,4 +1,6 @@
 ﻿#if (EnableDB)
+using DbType = SqlSugar.DbType;
+using System.Data;
 using Microsoft.Data.Sqlite;
 using kentxxq.Templates.Aspnetcore.DB;
 using Serilog;
@@ -27,48 +29,64 @@ public static class Init
             DbType = dbType, 
             IsAutoCloseConnection = true
         });
-        try
+        
+        // 即使sqlite文件不存在，CheckConnection也会检查通过
+        // 所以单独处理
+        if (dbType == DbType.Sqlite)
         {
-            // 即使sqlite文件不存在，CheckConnection也会检查通过
-            // 所以单独处理
-            if (dbType == DbType.Sqlite)
+            var builder = new SqliteConnectionStringBuilder(connectionString);
+            if (File.Exists(builder.DataSource))
             {
-                var builder = new SqliteConnectionStringBuilder(connectionString);
-                if (File.Exists(builder.DataSource))
-                {
-                    Log.Information("数据库连接成功");
-                }
-                else
-                {
-                    throw new FileNotFoundException(null,builder.DataSource);
-                }
+                Log.Information("检测到数据库文件{BuilderDataSource}", builder.DataSource);
+                SyncTable(db);
             }
             else
             {
-                db.Ado.CheckConnection();
-                Log.Information("数据库连接成功");
+                Log.Warning("数据库{BuilderDataSource}不存在", builder.DataSource);
+                CreateDatabase(db);
+                SyncTable(db);
+                InitTableData(db);
             }
         }
-        catch (Exception)
+        else // 其他类型数据库
         {
-            Log.Warning("数据库连接失败");
-            var databaseCreated = db.DbMaintenance.CreateDatabase();
-            if (!databaseCreated) throw;
-            Log.Warning("数据库创建成功，正在初始化中...");
-#pragma warning disable CS8602 // 解引用可能出现空引用。
-            var types = typeof(User).Assembly
-                .GetTypes()
-                .Where(it => it.FullName.StartsWith("kentxxq.Templates.Aspnetcore"))
-                .ToArray();
-#pragma warning restore CS8602 // 解引用可能出现空引用。
-            Log.Warning("开始创建表格");
-            db.CodeFirst.SetStringDefaultLength(200).InitTables(types); //根据types创建表
-
-            InitTableData(db);// 初始化表数据
+            try
+            {
+                db.Ado.CheckConnection();
+                Log.Information("数据库连接成功");
+                SyncTable(db);
+            }
+            catch (Exception)
+            {
+                Log.Warning("数据库连接失败");
+                CreateDatabase(db);
+                SyncTable(db);
+                InitTableData(db);
+            }
         }
+        
     }
-    
-    private static void InitTableData(SqlSugarClient client)
+
+    private static void CreateDatabase(ISqlSugarClient db)
+    {
+        var databaseCreated = db.DbMaintenance.CreateDatabase();
+        if (!databaseCreated) throw new DataException("数据库创建失败....");
+    }
+
+    private static void SyncTable(ISqlSugarClient db)
+    {
+        Log.Warning("数据库创建成功，正在初始化中...");
+#pragma warning disable CS8602 // 解引用可能出现空引用。
+        var types = typeof(User).Assembly
+            .GetTypes()
+            .Where(it => it.FullName.StartsWith("kentxxq.Templates.Aspnetcore"))
+            .ToArray();
+#pragma warning restore CS8602 // 解引用可能出现空引用。
+        Log.Warning("开始创建表格");
+        db.CodeFirst.SetStringDefaultLength(200).InitTables(types); //根据types创建表
+    }
+
+    private static void InitTableData(ISqlSugarClient client)
     {
         var initUser = new User { Username = "ken", Password = "ken", LastLoginTime = DateTime.Now };
         var count = client.Insertable(initUser).ExecuteCommand();
