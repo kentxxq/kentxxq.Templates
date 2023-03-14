@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.Metrics;
-using OpenTelemetry.Metrics;
+﻿using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 #if (EnableTracing)
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -34,20 +34,9 @@ public static class MyOpentelemetryExtension
     /// <param name="service"></param>
     private static void AddMetrics(IServiceCollection service)
     {
-        var meter = new Meter(AppName, AppVersion);
-        service.AddSingleton(meter);
-
-        service.AddOpenTelemetryMetrics(b =>
-        {
-            //b.AddPrometheusExporter(options =>
-            //{
-            //    //options.HttpListenerPrefixes = new[] { "https://localhost:443" };
-            //    //options.ScrapeEndpointPath = "/api/metrics";
-            //})
-            //    .AddAspNetCoreInstrumentation()
-            //    .AddRuntimeInstrumentation();
-
-            b.AddPrometheusExporter()
+        service.AddOpenTelemetry()
+            .ConfigureResource(builder => builder.AddService(AppName, serviceVersion: AppVersion))
+            .WithMetrics(builder => builder.AddPrometheusExporter()
                 .AddMeter(AppName)
                 .AddHttpClientInstrumentation()
                 .AddAspNetCoreInstrumentation()
@@ -65,8 +54,7 @@ public static class MyOpentelemetryExtension
                     // o.AddEventSources("System.Net.Security"); 主要是ssl信息，挂在代理后面不需要这个
                     o.AddEventSources("System.Net.Sockets");
                 })
-                ;
-        });
+            );
     }
 #if (EnableTracing)
     /// <summary>
