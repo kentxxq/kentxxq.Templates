@@ -1,4 +1,4 @@
-﻿namespace kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
+﻿namespace kentxxq.Templates.Aspnetcore.Shared.Response;
 
 /// <summary>
 /// 统一返回模型

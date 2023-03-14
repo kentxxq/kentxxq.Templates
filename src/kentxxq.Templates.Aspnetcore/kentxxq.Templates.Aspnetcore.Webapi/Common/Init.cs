@@ -88,14 +88,6 @@ public static class Init
         var initUser = new User { Username = "ken", Password = "ken", LastLoginTime = DateTime.Now };
         var count = client.Insertable(initUser).ExecuteCommand();
         Log.Warning("初始化表数据-{UserName} {Count}条", nameof(User), count);
-
-        var initAddresses = new List<Address>
-        {
-            new() { UserAddress = "qcd1", Uid = 1, Name = "ken", Phone = "123" },
-            new() { UserAddress = "qcd2", Uid = 1, Name = "ken", Phone = "123" }
-        };
-        count = client.Insertable(initAddresses).ExecuteCommand();
-        Log.Warning("初始化表数据-{AddressName} {Count}条", nameof(Address), count);
     }
 #endif
 }

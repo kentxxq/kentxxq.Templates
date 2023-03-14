@@ -35,7 +35,6 @@
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.0.0" />
         <PackageReference Include="Quartz.AspNetCore" Version="3.6.0" Condition=" '$(EnableQuartz)' != 'false' " />
         <PackageReference Include="Quartz.Serialization.Json" Version="3.6.0" Condition=" '$(EnableQuartz)' != 'false' " />
-        <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta04" PrivateAssets="all" ExcludeAssets="runtime" />
         <PackageReference Include="Riok.Mapperly" Version="2.6.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
         <PackageReference Include="Serilog.Enrichers.Span" Version="3.1.0" Condition=" '$(EnableTracing)' != 'false' " />
@@ -49,6 +48,7 @@
     <ItemGroup>
         <ProjectReference Include="..\kentxxq.Templates.Aspnetcore.DB\kentxxq.Templates.Aspnetcore.DB.csproj" Condition=" '$(EnableDB)' != 'false' " />
         <ProjectReference Include="..\kentxxq.Templates.Aspnetcore.UI\kentxxq.Templates.Aspnetcore.UI.csproj" Condition=" '$(EnableBlazor)' != 'false' " />
+        <ProjectReference Include="..\kentxxq.Templates.Aspnetcore.Shared\kentxxq.Templates.Aspnetcore.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>

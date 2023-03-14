@@ -1,4 +1,4 @@
-﻿namespace kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
+﻿namespace kentxxq.Templates.Aspnetcore.Shared.SO.Demo;
 
 /// <summary>
 /// 调度器状态SO

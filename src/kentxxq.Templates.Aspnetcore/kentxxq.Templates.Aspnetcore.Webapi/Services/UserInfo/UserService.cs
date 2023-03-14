@@ -18,16 +18,6 @@ namespace kentxxq.Templates.Aspnetcore.Webapi.Services.UserInfo
         }
 
         /// <inheritdoc />
-        public async Task<List<Address>> GetUserAddressByUsername(string username)
-        {
-            var data = await _sqlSugarClient.Queryable<User>()
-                .LeftJoin<Address>((u, a) => u.Id == a.Uid)
-                .Select((u, a) => a)
-                .ToListAsync();
-            return data;
-        }
-
-        /// <inheritdoc />
         public async Task<User?> Login(string username, string password)
         {
             var user = await _sqlSugarClient.Queryable<User>()

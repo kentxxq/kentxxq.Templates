@@ -3,11 +3,11 @@ using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.Security.Claims;
 using IdentityModel;
+using kentxxq.Templates.Aspnetcore.Shared.Response;
+using kentxxq.Templates.Aspnetcore.Shared.SO.Demo;
 using kentxxq.Templates.Aspnetcore.Webapi.Common;
-using kentxxq.Templates.Aspnetcore.Webapi.Common.Response;
 using kentxxq.Templates.Aspnetcore.Webapi.Services;
 using kentxxq.Templates.Aspnetcore.Webapi.Services.Tools;
-using kentxxq.Templates.Aspnetcore.Webapi.SO.Demo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -308,19 +308,6 @@ public class DemoController : ControllerBase
         }
 
         return ResultModel<string>.Error("登录失败，用户名或密码错误", "");
-    }
-
-    /// <summary>
-    /// 通过用户名查询用户地址信息
-    /// </summary>
-    /// <param name="username">用户名</param>
-    /// <returns></returns>
-    [HttpGet]
-    public async Task<ResultModel<IEnumerable<AddressSO>>> GetUserAddressByUsername(string username)
-    {
-        var data = await _userService.GetUserAddressByUsername(username);
-        var result = data.Select(a => Mapper.AddressToAddressSO(a));
-        return ResultModel<IEnumerable<AddressSO>>.Ok(result);
     }
 
     #endregion
